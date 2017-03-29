@@ -52,6 +52,7 @@ namespace LayoutCeiling
 			actions.Add(new Actions.SelectAll(this));
 			actions.Add(new Actions.Undo(this));
 			actions.Add(new Actions.Redo(this));
+			actions.Add(new Actions.DeletePoint(this));
 
 			foreach (var act in actions)
 			{

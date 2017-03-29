@@ -59,7 +59,7 @@ namespace LayoutCeiling
 			fontLetter = new Font("Arial", 10);
 			fontLen = new Font("Arial", 8);
 
-			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+			//g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 		}
 
 		public void Draw()

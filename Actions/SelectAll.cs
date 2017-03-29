@@ -9,7 +9,7 @@ namespace LayoutCeiling.Actions
 {
 	class SelectAll : Action
 	{
-		public SelectAll(MainForm form) : base(form, "Выделить все", (Keys)(Keys.Control | Keys.A))
+		public SelectAll(MainForm form) : base(form, "Выделить все", Keys.Control | Keys.A)
 		{
 			MenuItem = new ToolStripMenuItem(name);
 			MenuItem.ShowShortcutKeys = true;

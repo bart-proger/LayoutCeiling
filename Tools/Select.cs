@@ -30,10 +30,17 @@ namespace LayoutCeiling.Tools
 					prevSelectionPointsIndices = new HashSet<int>(mainForm.selection.indices);
 				}
 
-				Text += " ";
-				foreach (int i in pointsIndices)
+				if (pointsIndices.Count == 0)
 				{
-					Text += CeilingLayout.PointLetter(i);
+					Text = "Сброс выделения";
+				}
+				else
+				{
+					Text += " ";
+					foreach (int i in pointsIndices)
+					{
+						Text += CeilingLayout.PointLetter(i);
+					}
 				}
 			}
 

@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Action.cs" />
+    <Compile Include="Actions\DeletePoint.cs" />
     <Compile Include="Actions\SelectAll.cs" />
     <Compile Include="Actions\Undo.cs" />
     <Compile Include="Actions\Redo.cs" />

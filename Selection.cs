@@ -35,5 +35,10 @@ namespace LayoutCeiling
 		{
 			return this.indices.Contains(index);
 		}
+
+		public bool IsEmpty()
+		{
+			return this.indices.Count == 0;
+		}
 	}
 }
