@@ -70,6 +70,7 @@
     <Compile Include="Actions\SelectAll.cs" />
     <Compile Include="Actions\Undo.cs" />
     <Compile Include="Actions\Redo.cs" />
+    <Compile Include="Actions\ZoomInOut.cs" />
     <Compile Include="CeilingLayuot.cs" />
     <Compile Include="CustomCursor.cs" />
     <Compile Include="MainForm.cs">

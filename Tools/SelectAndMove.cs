@@ -91,9 +91,9 @@ namespace LayoutCeiling.Tools
 			}
 		}
 
-		public override void OnMouseDown(MouseEventArgs e)
+		public override void OnMouseDown(MouseEventArgs e, Point2 p)
 		{
-			base.OnMouseDown(e);
+			base.OnMouseDown(e, p);
 
 			if (e.Button == MouseButtons.Left)
 			{
@@ -110,15 +110,15 @@ namespace LayoutCeiling.Tools
 			}
 		}
 
-		public override void OnMouseMove(MouseEventArgs e)
+		public override void OnMouseMove(MouseEventArgs e, Point2 p)
 		{
 			if (!moving)
 			{
-				base.OnMouseMove(e);
+				base.OnMouseMove(e, p);
 
 				if (!selecting)
 				{
-					from = to = Point2.FromPoint(e.Location);
+					from = to = p;
 					FindPointsInSelectArea();
 					if (pointsInSelectArea.Count > 0 && selectMode == SelectMode.New)
 					{
@@ -132,13 +132,13 @@ namespace LayoutCeiling.Tools
 			}
 			else
 			{
-				to = Point2.FromPoint(e.Location);
+				to = p;
 			}
 		}
 
-		public override void OnMouseUp(MouseEventArgs e)
+		public override void OnMouseUp(MouseEventArgs e, Point2 p)
 		{
-			base.OnMouseUp(e);
+			base.OnMouseUp(e, p);
 
 			if (e.Button == MouseButtons.Left)
 			{

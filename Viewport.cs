@@ -18,18 +18,23 @@ namespace LayoutCeiling
 		private Bitmap backBuffer;
 		private Rectangle backBufferRect;
 		private Graphics g, graphics;
-		public float PointSize { set; get; }
 
 		Pen penNormal, penGrid;
 		Font fontLetter, fontLen;
 
+		public float PointSize { set; get; }
 		public float GridSize { set; get; }
+
+		public float Zoom { set; get; }
+		public Point2 Offset { set; get; }
 
 		public Viewport(MainForm mainForm, Panel source)
 			: base()
 		{
 			PointSize = 8;
 			GridSize = 50;
+			Zoom = 1;
+			Offset = new Point2(0, 0);
 
 			this.mainForm = mainForm;
 			//			redrawTimer = new Timer();
@@ -45,9 +50,11 @@ namespace LayoutCeiling
 			Location = source.Location;
 			Size = source.Size;
 			TabIndex = source.TabIndex;
-			MouseDown += new MouseEventHandler(OnMouseDown);
-			MouseMove += new MouseEventHandler(OnMouseMove);
-			MouseUp += new MouseEventHandler(OnMouseUp);
+
+			MouseDown += OnMouseDown;
+			MouseMove += OnMouseMove;
+			MouseUp += OnMouseUp;
+			MouseWheel += OnMouseWheel;
 
 			graphics = Graphics.FromHwnd(Handle);
 			backBuffer = new Bitmap(Width, Height, graphics);
@@ -60,6 +67,11 @@ namespace LayoutCeiling
 			fontLen = new Font("Arial", 8);
 
 			//g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+		}
+
+		private void OnMouseWheel(object sender, MouseEventArgs e)
+		{
+			Zoom += e.Delta * 0.1f;
 		}
 
 		public void Draw()
@@ -75,6 +87,7 @@ namespace LayoutCeiling
 			g.DrawString("select: " + mainForm.selection.indices.Count.ToString(), Font, Brushes.Gray, 2, 2);
 			g.DrawString("P = " + mainForm.layout.Perimeter().ToString("#.#") + " см", Font, Brushes.Gray, 2, 22);
 			g.DrawString(p.ToString(), Font, Brushes.Gray, 2, 42);
+			g.DrawString("zoom: " + (Zoom * 100).ToString("#.#") + "%", Font, Brushes.Gray, 2, 62);
 
 			g.Flush();
 			graphics.DrawImage(backBuffer, backBufferRect);
@@ -92,29 +105,35 @@ namespace LayoutCeiling
 
 		private void OnMouseMove(object sender, MouseEventArgs e)
 		{
-			p = new Point2(e.X, e.Y);
+			p = FromViewportSpace(e.Location);
 
 			if (mainForm.activeTool != null)
-				mainForm.activeTool.OnMouseMove(e);
+				mainForm.activeTool.OnMouseMove(e, p);
 			Draw();
 		}
 
 		private void OnMouseUp(object sender, MouseEventArgs e)
 		{
+			p = FromViewportSpace(e.Location);
+
 			if (mainForm.activeTool != null)
-				mainForm.activeTool.OnMouseUp(e);
+				mainForm.activeTool.OnMouseUp(e, p);
 			Draw();
 		}
 
 		private void OnMouseDown(object sender, MouseEventArgs e)
 		{
+			p = FromViewportSpace(e.Location);
+
 			if (mainForm.activeTool != null)
-				mainForm.activeTool.OnMouseDown(e);
+				mainForm.activeTool.OnMouseDown(e, p);
 			Draw();
 		}
 
 		public void DrawPoint(Point2 point, DrawStyle style)
 		{
+			point = ToViewportSpace(point);
+
 			switch (style)
 			{
 				case DrawStyle.Normal:
@@ -135,26 +154,30 @@ namespace LayoutCeiling
 			string len = p1.DistanceTo(p2).ToString("0.#");
 			RectangleF lenRect = new RectangleF();
 			lenRect.Size = g.MeasureString(len, fontLen);
+
+			p1 = ToViewportSpace(p1);
+			p2 = ToViewportSpace(p2);
+
 			Point2 lenPos = new Point2(p1.X + (p2.X - p1.X) / 2 - lenRect.Size.Width / 2, p1.Y + (p2.Y - p1.Y) / 2 - lenRect.Size.Height / 2);
 			lenRect.Location = lenPos.ToPointF();
-// 			lenRect.Width += 6;
-// 			lenRect.Height += 6;
-// 			lenRect.Offset(-3, -3);
+			// 			lenRect.Width += 6;
+			// 			lenRect.Height += 6;
+			// 			lenRect.Offset(-3, -3);
 
 			switch (style)
 			{
 				case DrawStyle.Normal:
-					g.DrawLine(penNormal, p1.ToPoint(), p2.ToPoint());
+					g.DrawLine(penNormal, p1.ToPointF(), p2.ToPointF());
 					g.FillEllipse(Brushes.White, lenRect);
 					g.DrawString(len, fontLen, Brushes.Black, lenPos.ToPointF());
 					break;
 				case DrawStyle.Error:
-					g.DrawLine(Pens.Red, p1.X, p1.Y, p2.X, p2.Y);
+					g.DrawLine(Pens.Red, p1.ToPointF(), p2.ToPointF());
 					g.FillEllipse(Brushes.White, lenRect);
 					g.DrawString(len, fontLen, Brushes.Red, lenPos.ToPointF());
 					break;
 				case DrawStyle.Preview:
-					g.DrawLine(Pens.LightGray, p1.ToPoint(), p2.ToPoint());
+					g.DrawLine(Pens.LightGray, p1.ToPointF(), p2.ToPointF());
 					g.FillEllipse(Brushes.White, lenRect);
 					g.DrawString(len, fontLen, Brushes.Gray, lenPos.ToPointF());
 					break;
@@ -187,10 +210,11 @@ namespace LayoutCeiling
 
 			if (layout.points.Count > 2)
 			{
-				Point[] pointsArray = new Point[layout.points.Count];
+				PointF[] pointsArray = new PointF[layout.points.Count];
 				for (int i = 0; i < layout.points.Count; ++i)
 				{
-					pointsArray[i] = layout.points[i].ToPoint();
+					pointsArray[i].X = layout.points[i].X * Zoom;
+					pointsArray[i].Y = layout.points[i].Y * Zoom;
 				}
 				g.FillPolygon(Brushes.White, pointsArray);
 			}
@@ -209,24 +233,25 @@ namespace LayoutCeiling
 				Point2 p = layout.points[i];
 				if (mainForm.selection.Contains(i))
 				{
-					mainForm.viewport.DrawPoint(p, Viewport.DrawStyle.Selected);
+					/*mainForm.viewport.*/DrawPoint(p, Viewport.DrawStyle.Selected);
 				}
 				else
 				{
-					mainForm.viewport.DrawPoint(p, Viewport.DrawStyle.Normal);
+					/*mainForm.viewport.*/DrawPoint(p, Viewport.DrawStyle.Normal);
 				}
 
+				p = ToViewportSpace(p);
 				g.DrawString(CeilingLayout.PointLetter(i), fontLetter, Brushes.Black, p.X + 2, p.Y + 2);
 			}
 		}
 
 		private void DrawGrid()
 		{
-			for (float x = 0; x < Width; x += GridSize)
+			for (float x = 0; x < Width; x += (GridSize * Zoom))
 			{
 				g.DrawLine(penGrid, x, 0, x, Height);
 			}
-			for (float y = 0; y < Height; y += GridSize)
+			for (float y = 0; y < Height; y += (GridSize * Zoom))
 			{
 				g.DrawLine(penGrid, 0, y, Width, y);
 			}
@@ -242,6 +267,18 @@ namespace LayoutCeiling
 				g.DrawLine(Pens.Blue, x - 6, y, x + 6, y);
 				g.DrawLine(Pens.Blue, x, y - 6, x, y + 6);
 			}
+		}
+
+		public Point2 ToViewportSpace(Point2 p)
+		{
+			p.X *= Zoom;
+			p.Y *= Zoom;
+			return p;
+		}
+
+		public Point2 FromViewportSpace(Point p)
+		{
+			return new Point2(p.X / Zoom, p.Y / Zoom);
 		}
 	}
 }

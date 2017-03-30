@@ -71,9 +71,9 @@ namespace LayoutCeiling
 		public virtual void DrawChagesPreview(Graphics g) { }
 		public abstract void ApplyChanges();
 
-		public virtual void OnMouseMove(MouseEventArgs e) { }
-		public virtual void OnMouseUp(MouseEventArgs e) { }
-		public virtual void OnMouseDown(MouseEventArgs e) { }
+		public virtual void OnMouseMove(MouseEventArgs e, Point2 p) { }
+		public virtual void OnMouseUp(MouseEventArgs e, Point2 p) { }
+		public virtual void OnMouseDown(MouseEventArgs e, Point2 p) { }
 		public virtual void OnKeyDown(KeyEventArgs e) { }
 		public virtual void OnKeyUp(KeyEventArgs e) { }
 	}

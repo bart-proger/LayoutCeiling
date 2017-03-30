@@ -10,6 +10,8 @@ namespace LayoutCeiling.Tools
 {
 	public class AddPolygon : Tool
 	{
+		//TODO: undo/redo cmd
+
 		Cursor cursorPen;
 		Point2 newPoint;
 		List<Point2> polygon;
@@ -30,13 +32,12 @@ namespace LayoutCeiling.Tools
 			polygon = new List<Point2>();
 		}
 
-		public override void OnMouseMove(MouseEventArgs e)
+		public override void OnMouseMove(MouseEventArgs e, Point2 p)
 		{
-			newPoint.X = e.Location.X;
-			newPoint.Y = e.Location.Y;
+			newPoint = p;
 		}
 
-		public override void OnMouseUp(MouseEventArgs e)
+		public override void OnMouseUp(MouseEventArgs e, Point2 p)
 		{
 			if (e.Button == MouseButtons.Left)
 			{

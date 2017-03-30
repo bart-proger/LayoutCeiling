@@ -33,7 +33,7 @@ namespace LayoutCeiling
 
 			layout = new CeilingLayout();
 			selection = new Selection();
-			undoStack = new UndoStack(25);
+			undoStack = new UndoStack(30);
 
 			tools = new List<Tool>();
 			tools.Add(new Tools.Select(this));
@@ -53,6 +53,10 @@ namespace LayoutCeiling
 			actions.Add(new Actions.Undo(this));
 			actions.Add(new Actions.Redo(this));
 			actions.Add(new Actions.DeletePoint(this));
+
+			actions.Add(new Actions.Zoom100(this));
+			actions.Add(new Actions.ZoomIn(this));
+			actions.Add(new Actions.ZoomOut(this));
 
 			foreach (var act in actions)
 			{

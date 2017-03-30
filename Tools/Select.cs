@@ -126,7 +126,7 @@ namespace LayoutCeiling.Tools
 			{
 				for (int i = 0; i < mainForm.layout.points.Count; ++i)
 				{
-					if (from.DistanceTo(mainForm.layout.points[i]) <= mainForm.viewport.PointSize / 2)
+					if (from.DistanceTo(mainForm.layout.points[i]) <= mainForm.viewport.PointSize / 2 / mainForm.viewport.Zoom)
 					{
 						bool add = true;
 						switch (selectMode)
@@ -243,29 +243,29 @@ namespace LayoutCeiling.Tools
 			mainForm.viewport.Cursor = cursor = cursorSelect;
 		}
 		
-		public override void OnMouseDown(MouseEventArgs e)
+		public override void OnMouseDown(MouseEventArgs e, Point2 p)
 		{
 			if (e.Button == MouseButtons.Left)
 			{
 				selecting = true;/*toolMode = ToolMode.Select;*/
 
-				from = to = Point2.FromPoint(e.Location);
+				from = to = p;
 				FindPointsInSelectArea();
 			}
 		}
 
-		public override void OnMouseMove(MouseEventArgs e)
+		public override void OnMouseMove(MouseEventArgs e, Point2 p)
 		{
 			if (selecting)
 			{
-				to = Point2.FromPoint(e.Location);
+				to = p;
 				FindPointsInSelectArea();
 			}
 
 			//mainForm.viewport.Cursor = cursorSelect;
 		}
 
-		public override void OnMouseUp(MouseEventArgs e)
+		public override void OnMouseUp(MouseEventArgs e, Point2 p)
 		{
 			if (e.Button == MouseButtons.Left)
 			{
@@ -281,14 +281,17 @@ namespace LayoutCeiling.Tools
 		{
 			if (selecting)
 			{
-					Viewport.DrawStyle drawStyle = Viewport.DrawStyle.Selected;
-					if (selectMode == SelectMode.Remove)
-						drawStyle = Viewport.DrawStyle.Normal;
-					foreach (int i in pointsInSelectArea)
-					{
-						mainForm.viewport.DrawPoint(mainForm.layout.points[i], drawStyle);
-					}
-					g.DrawRectangle(pen, left, top, right - left, bottom - top);
+				Viewport.DrawStyle drawStyle = Viewport.DrawStyle.Selected;
+				if (selectMode == SelectMode.Remove)
+					drawStyle = Viewport.DrawStyle.Normal;
+				foreach (int i in pointsInSelectArea)
+				{
+					mainForm.viewport.DrawPoint(mainForm.layout.points[i], drawStyle);
+				}
+
+				Point2 rectPos = mainForm.viewport.ToViewportSpace(new Point2(left, top));
+				Point2 rectSize = mainForm.viewport.ToViewportSpace(new Point2(right - left, bottom - top));
+				g.DrawRectangle(pen, rectPos.X, rectPos.Y, rectSize.X, rectSize.Y);
 			}
 		}
 	}

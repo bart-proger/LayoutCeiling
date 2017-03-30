@@ -72,13 +72,9 @@ namespace LayoutCeiling.Tools
 			overLine = false;
 		}
 		
-		public override void OnMouseDown(MouseEventArgs e)
+		public override void OnMouseMove(MouseEventArgs e, Point2 p)
 		{
-		}
-
-		public override void OnMouseMove(MouseEventArgs e)
-		{
-			Point2 cursorPos = newPoint = Point2.FromPoint(e.Location);
+			Point2 cursorPos = newPoint = p;
 
 			overLine = false;
 			int i = mainForm.layout.points.Count-1;
@@ -95,7 +91,7 @@ namespace LayoutCeiling.Tools
 			}
 		}
 
-		public override void OnMouseUp(MouseEventArgs e)
+		public override void OnMouseUp(MouseEventArgs e, Point2 p)
 		{
 			if (overLine)
 				ApplyChanges();
