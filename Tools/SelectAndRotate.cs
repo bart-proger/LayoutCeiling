@@ -66,7 +66,6 @@ namespace LayoutCeiling.Tools
 
 		private bool rotating;
 		private Cursor cursorRotate;
-		private Point2 center;
 
 		public SelectAndRotate(MainForm mainForm): base(mainForm)
 		{
@@ -81,26 +80,6 @@ namespace LayoutCeiling.Tools
 			toolButton.Click += OnToolClick;
 
 			cursorRotate = CustomCursor.Create("data/cursors/rotate.cur");
-		}
-
-		private void CalcSelectionCenter()
-		{
-			center = new Point2(0, 0);
-			if (mainForm.selection.indices.Count == 0)
-				return;
-			if (mainForm.selection.indices.Count == 1)
-			{
-				center = mainForm.layout.points[mainForm.selection.indices.First()];
-				return;
-			}
-
-			foreach (var i in mainForm.selection.indices)
-			{
-				center.X += mainForm.layout.points[i].X;
-				center.Y += mainForm.layout.points[i].Y;
-			}
-			center.X /= mainForm.selection.indices.Count;
-			center.Y /= mainForm.selection.indices.Count;
 		}
 
 		public static Point2 RotatePoint(Point2 p, Point2 center, double dAngle)
@@ -121,13 +100,14 @@ namespace LayoutCeiling.Tools
 		public override void ActivateTool()
 		{
 			base.ActivateTool();
-			CalcSelectionCenter();
+			mainForm.selection.Pivot = CalcSelectionCenter();
 		}
 
 		public override void ApplyChanges()
 		{
 			if (rotating)
 			{
+				Point2 center = mainForm.selection.Pivot;
 				double dAngle = Math.Atan2(to.Y - center.Y, to.X - center.X) - Math.Atan2(from.Y - center.Y, from.X - center.X);
 				mainForm.undoStack.Push(new RotateCmd(mainForm, center, dAngle));
 //  				foreach (var i in mainForm.selection.indices)
@@ -155,7 +135,7 @@ namespace LayoutCeiling.Tools
 					}
 
 					rotating = true;
-					CalcSelectionCenter();
+					mainForm.selection.Pivot = CalcSelectionCenter();
 					mainForm.viewport.Cursor = cursorRotate;
 				}
 			}
@@ -193,17 +173,18 @@ namespace LayoutCeiling.Tools
 
 			if (e.Button == MouseButtons.Left)
 			{
-				CalcSelectionCenter();
+				mainForm.selection.Pivot = CalcSelectionCenter();
 				rotating = false;
 			}
 		}
 
 		public override void DrawChagesPreview(Graphics g)
 		{
-			mainForm.viewport.DrawPivot(center);
+			mainForm.viewport.DrawPivot();
 
 			if (rotating)
 			{
+				Point2 center = mainForm.selection.Pivot;
 				double dAngle = Math.Atan2(to.Y - center.Y, to.X - center.X) - Math.Atan2(from.Y - center.Y, from.X - center.X);
 
 				for (int i = 0; i < mainForm.selection.indices.Count; ++i)

@@ -118,6 +118,28 @@ namespace LayoutCeiling.Tools
 			left = right = top = bottom = -1;
 		}
 
+		protected Point2 CalcSelectionCenter()
+		{
+			Point2 center = new Point2(0, 0);
+			if (mainForm.selection.indices.Count == 0)
+				return center;
+			if (mainForm.selection.indices.Count == 1)
+			{
+				center = mainForm.layout.points[mainForm.selection.indices.First()];
+				return center;
+			}
+
+			foreach (var i in mainForm.selection.indices)
+			{
+				center.X += mainForm.layout.points[i].X;
+				center.Y += mainForm.layout.points[i].Y;
+			}
+			center.X /= mainForm.selection.indices.Count;
+			center.Y /= mainForm.selection.indices.Count;
+
+			return center;
+		}
+
 		protected void FindPointsInSelectArea()
 		{
 			pointsInSelectArea.Clear();

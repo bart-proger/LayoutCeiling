@@ -257,10 +257,11 @@ namespace LayoutCeiling
 			}
 		}
 
-		public void DrawPivot(Point2 p)
+		public void DrawPivot()
 		{
-			int x = (int)p.X;
-			int y = (int)p.Y;
+			int x = (int)ToViewportSpace(mainForm.selection.Pivot).X;
+			int y = (int)ToViewportSpace(mainForm.selection.Pivot).Y;
+
 			if (mainForm.selection.indices.Count > 0)
 			{
 				g.DrawEllipse(Pens.Blue, x - 3, y - 3, 6, 6);

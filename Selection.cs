@@ -9,7 +9,7 @@ namespace LayoutCeiling
 	public class Selection
 	{
 		public HashSet<int> indices;
-		Point2 pivot;
+		public Point2 Pivot { get; set; }
 
 		public Selection()
 		{

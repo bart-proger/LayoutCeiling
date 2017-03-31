@@ -64,7 +64,6 @@ namespace LayoutCeiling.Tools
 
 		private bool scaling;
 		private Cursor cursorScale;
-		private Point2 center;
 		public static float ScaleSize = 0.005f;
 
 		public SelectAndScale(MainForm mainForm): base(mainForm)
@@ -80,26 +79,6 @@ namespace LayoutCeiling.Tools
 			toolButton.Click += OnToolClick;
 
 			cursorScale = CustomCursor.Create("data/cursors/scale.cur");
-		}
-
-		private void CalcSelectionCenter()
-		{
-			center = new Point2(0, 0);
-			if (mainForm.selection.indices.Count == 0)
-				return;
-			if (mainForm.selection.indices.Count == 1)
-			{
-				center = mainForm.layout.points[mainForm.selection.indices.First()];
-				return;
-			}
-
-			foreach (var i in mainForm.selection.indices)
-			{
-				center.X += mainForm.layout.points[i].X;
-				center.Y += mainForm.layout.points[i].Y;
-			}
-			center.X /= mainForm.selection.indices.Count;
-			center.Y /= mainForm.selection.indices.Count;
 		}
 
 		public static Point2 ScalePoint(Point2 p, Point2 center, double dScaleX, double dScaleY)
@@ -135,7 +114,7 @@ namespace LayoutCeiling.Tools
 		public override void ActivateTool()
 		{
 			base.ActivateTool();
-			CalcSelectionCenter();
+			mainForm.selection.Pivot = CalcSelectionCenter();
 		}
 
 		public override void ApplyChanges()
@@ -148,7 +127,7 @@ namespace LayoutCeiling.Tools
 
 				if (dx != 0 || dy != 0)
 				{
-					mainForm.undoStack.Push(new ScaleCmd(mainForm, center, dScaleX, dScaleY));
+					mainForm.undoStack.Push(new ScaleCmd(mainForm, mainForm.selection.Pivot, dScaleX, dScaleY));
 				}
 //  				foreach (var i in mainForm.selection.pointsIndices)
 // 				{
@@ -175,7 +154,7 @@ namespace LayoutCeiling.Tools
 					}
 
 					scaling = true;
-					CalcSelectionCenter();
+					mainForm.selection.Pivot = CalcSelectionCenter();
 					mainForm.viewport.Cursor = cursorScale;
 				}
 			}
@@ -213,14 +192,14 @@ namespace LayoutCeiling.Tools
 
 			if (e.Button == MouseButtons.Left)
 			{
-				CalcSelectionCenter();
+				mainForm.selection.Pivot = CalcSelectionCenter();
 				scaling = false;
 			}
 		}
 
 		public override void DrawChagesPreview(Graphics g)
 		{
-			mainForm.viewport.DrawPivot(center);
+			mainForm.viewport.DrawPivot();
 
 			if (scaling)
 			{
@@ -234,11 +213,11 @@ namespace LayoutCeiling.Tools
 					int next = (moved + 1) % mainForm.layout.points.Count;
 					int prev = (moved - 1 + mainForm.layout.points.Count) % mainForm.layout.points.Count;
 
-					Point2 p1 = ScalePoint(mainForm.layout.points[moved], center, dScaleX, dScaleY);
+					Point2 p1 = ScalePoint(mainForm.layout.points[moved], mainForm.selection.Pivot, dScaleX, dScaleY);
 					Point2 p2 = mainForm.layout.points[next];
 					if (mainForm.selection.Contains(next))
 					{
-						p2 = ScalePoint(p2, center, dScaleX, dScaleY);
+						p2 = ScalePoint(p2, mainForm.selection.Pivot, dScaleX, dScaleY);
 					}
 
 					mainForm.viewport.DrawLine(p1, p2, Viewport.DrawStyle.Preview);
