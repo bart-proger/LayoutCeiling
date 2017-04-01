@@ -81,7 +81,7 @@ namespace LayoutCeiling.Tools
 			for (int j = 0; j < mainForm.layout.points.Count; ++j)
 			{
 				if (Geometry.ProjectionPointToSegment(cursorPos, mainForm.layout.points[i], mainForm.layout.points[j], ref newPoint)
-					&& Geometry.PointInCircle(newPoint, cursorPos, mainForm.viewport.PointSize / 2))
+					&& Geometry.PointInCircle(newPoint, cursorPos, mainForm.viewport.PointSize/* / 2f*/))
 				{
 					insertIndex = i+1;
 					overLine = true;

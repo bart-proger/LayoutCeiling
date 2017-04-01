@@ -148,7 +148,7 @@ namespace LayoutCeiling.Tools
 			{
 				for (int i = 0; i < mainForm.layout.points.Count; ++i)
 				{
-					if (from.DistanceTo(mainForm.layout.points[i]) <= mainForm.viewport.PointSize / 2 / mainForm.viewport.Zoom)
+					if (from.DistanceTo(mainForm.layout.points[i]) <= mainForm.viewport.PointSize /*/ 2*/ / mainForm.viewport.Zoom)
 					{
 						bool add = true;
 						switch (selectMode)
@@ -314,6 +314,7 @@ namespace LayoutCeiling.Tools
 				Point2 rectPos = mainForm.viewport.ToViewportSpace(new Point2(left, top));
 				Point2 rectSize = mainForm.viewport.ToViewportSpace(new Point2(right - left, bottom - top));
 				g.DrawRectangle(pen, rectPos.X, rectPos.Y, rectSize.X, rectSize.Y);
+				mainForm.viewport.DrawSelectArea();
 			}
 		}
 	}

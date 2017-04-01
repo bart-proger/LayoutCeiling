@@ -42,6 +42,7 @@ namespace LayoutCeiling
 			tools.Add(new Tools.SelectAndScale(this));
 			tools.Add(new Tools.AddPolygon(this));
 			tools.Add(new Tools.AddPoint(this));
+			tools.Add(new Tools.HandTool(this));
 
 			foreach (var tool in tools)
 			{

@@ -94,6 +94,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Tools\AddPolygon.cs" />
+    <Compile Include="Tools\HandTool.cs" />
     <Compile Include="Tools\Select.cs" />
     <Compile Include="Tools\SelectAndMove.cs" />
     <Compile Include="Tools\SelectAndScale.cs" />
@@ -168,6 +169,7 @@
     </Content>
     <Content Include="data\icons\act_redo_s.png" />
     <Content Include="data\icons\act_undo_s.png" />
+    <None Include="data\icons\tool_handTool.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

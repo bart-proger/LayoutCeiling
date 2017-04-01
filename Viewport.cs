@@ -77,12 +77,16 @@ namespace LayoutCeiling
 		public void Draw()
 		{
 			g.Clear(BackColor);
+// 			g.ResetTransform();
+// 			g.TranslateTransform(Offset.X, Offset.Y);
+// 			g.ScaleTransform(Zoom, Zoom);
 
 			DrawGrid();
 			DrawLayout(mainForm.layout);
 			if (mainForm.activeTool != null)
 				mainForm.activeTool.DrawChagesPreview(g);
 
+			g.ResetTransform();
 			// info
 			g.DrawString("select: " + mainForm.selection.indices.Count.ToString(), Font, Brushes.Gray, 2, 2);
 			g.DrawString("P = " + mainForm.layout.Perimeter().ToString("#.#") + " см", Font, Brushes.Gray, 2, 22);
@@ -134,17 +138,19 @@ namespace LayoutCeiling
 		{
 			point = ToViewportSpace(point);
 
+			float psz = PointSize/* / Zoom*/;
+
 			switch (style)
 			{
 				case DrawStyle.Normal:
-					g.FillRectangle(Brushes.Green, point.X - PointSize / 2, point.Y - PointSize / 2, PointSize, PointSize);
+					g.FillRectangle(Brushes.Green, point.X - psz / 2, point.Y - psz / 2, psz, psz);
 					break;
 				case DrawStyle.Selected:
-					g.FillRectangle(Brushes.DodgerBlue, point.X - PointSize * 1.3f / 2f, point.Y - PointSize * 1.3f / 2f, PointSize * 1.3f, PointSize * 1.3f);
+					g.FillRectangle(Brushes.DodgerBlue, point.X - psz * 1.3f / 2f, point.Y - psz * 1.3f / 2f, psz * 1.3f, psz * 1.3f);
 					break;
 				case DrawStyle.New:
 				case DrawStyle.Preview:
-					g.FillRectangle(Brushes.Gray, point.X - PointSize / 2, point.Y - PointSize / 2, PointSize, PointSize);
+					g.FillRectangle(Brushes.Gray, point.X - psz / 2, point.Y - psz / 2, psz, psz);
 					break;
 			}
 		}
@@ -270,16 +276,21 @@ namespace LayoutCeiling
 			}
 		}
 
+		public void DrawSelectArea(float x1, float y1, float x2, float y2)
+		{
+			//TODO: рисовать прямоугольник выделения
+		}
+
 		public Point2 ToViewportSpace(Point2 p)
 		{
-			p.X *= Zoom;
-			p.Y *= Zoom;
+			p += Offset;
+			p *= Zoom;
 			return p;
 		}
 
 		public Point2 FromViewportSpace(Point p)
 		{
-			return new Point2(p.X / Zoom, p.Y / Zoom);
+			return new Point2(p.X / Zoom - Offset.X, p.Y / Zoom - Offset.Y);
 		}
 	}
 }

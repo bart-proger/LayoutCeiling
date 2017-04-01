@@ -82,16 +82,19 @@ namespace LayoutCeiling.Tools
 			{
 				for (int i = 0; i < polygon.Count - 1; ++i)
 				{
-					g.DrawLine(Pens.Green, polygon[i].X, polygon[i].Y, polygon[i + 1].X, polygon[i + 1].Y);
+					//g.DrawLine(Pens.Green, polygon[i].X, polygon[i].Y, polygon[i + 1].X, polygon[i + 1].Y);
+					mainForm.viewport.DrawLine(polygon[i], polygon[i+1], Viewport.DrawStyle.Preview);
 				}
-				g.DrawLine(Pens.Green, polygon.Last().X, polygon.Last().Y, newPoint.X, newPoint.Y);
+				//g.DrawLine(Pens.Green, polygon.Last().X, polygon.Last().Y, newPoint.X, newPoint.Y);
+				mainForm.viewport.DrawLine(polygon.Last(), newPoint, Viewport.DrawStyle.Preview);
 
 				//g.FillEllipse(Brushes.Gray, newPoint.X - mainForm.viewport.PointSize / 2, newPoint.Y - mainForm.viewport.PointSize / 2, mainForm.viewport.PointSize, mainForm.viewport.PointSize);
 			}
 
 			foreach (var p in polygon)
 			{
-				g.FillEllipse(Brushes.Green, p.X - mainForm.viewport.PointSize / 2, p.Y - mainForm.viewport.PointSize / 2, mainForm.viewport.PointSize, mainForm.viewport.PointSize);
+				//g.FillEllipse(Brushes.Green, p.X - mainForm.viewport.PointSize / 2, p.Y - mainForm.viewport.PointSize / 2, mainForm.viewport.PointSize, mainForm.viewport.PointSize);
+				mainForm.viewport.DrawPoint(p, Viewport.DrawStyle.Preview);
 			}
 		}
 	}
