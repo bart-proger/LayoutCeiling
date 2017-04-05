@@ -25,7 +25,7 @@ namespace LayoutCeiling.Tools
 			toolButton.Image = LayoutCeiling.Properties.Resources.tool_handTool;
 			toolButton.Click += OnToolClick;
 
-			//cursor = CustomCursor.Create("data/cursors/hand.cur");
+			cursor = CustomCursor.Create("data/cursors/hand.cur");
 
 			moving = false;
 		}

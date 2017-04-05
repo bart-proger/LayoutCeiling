@@ -19,7 +19,7 @@ namespace LayoutCeiling
 		private Rectangle backBufferRect;
 		private Graphics g, graphics;
 
-		Pen penNormal, penGrid;
+		Pen penNormal, penGrid, penSelectArea;
 		Font fontLetter, fontLen;
 
 		public float PointSize { set; get; }
@@ -65,6 +65,10 @@ namespace LayoutCeiling
 			penGrid = new Pen(Color.FromArgb(240, 240, 255));
 			fontLetter = new Font("Arial", 10);
 			fontLen = new Font("Arial", 8);
+
+			penSelectArea = new Pen(Color.FromArgb(128, Color.Black));
+			penSelectArea.DashCap = System.Drawing.Drawing2D.DashCap.Flat;
+			penSelectArea.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
 
 			//g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 		}
@@ -219,8 +223,8 @@ namespace LayoutCeiling
 				PointF[] pointsArray = new PointF[layout.points.Count];
 				for (int i = 0; i < layout.points.Count; ++i)
 				{
-					pointsArray[i].X = layout.points[i].X * Zoom;
-					pointsArray[i].Y = layout.points[i].Y * Zoom;
+					pointsArray[i].X = layout.points[i].X * Zoom + Offset.X;
+					pointsArray[i].Y = layout.points[i].Y * Zoom + Offset.Y;
 				}
 				g.FillPolygon(Brushes.White, pointsArray);
 			}
@@ -239,11 +243,11 @@ namespace LayoutCeiling
 				Point2 p = layout.points[i];
 				if (mainForm.selection.Contains(i))
 				{
-					/*mainForm.viewport.*/DrawPoint(p, Viewport.DrawStyle.Selected);
+					DrawPoint(p, DrawStyle.Selected);
 				}
 				else
 				{
-					/*mainForm.viewport.*/DrawPoint(p, Viewport.DrawStyle.Normal);
+					DrawPoint(p, DrawStyle.Normal);
 				}
 
 				p = ToViewportSpace(p);
@@ -253,11 +257,15 @@ namespace LayoutCeiling
 
 		private void DrawGrid()
 		{
-			for (float x = 0; x < Width; x += (GridSize * Zoom))
+ 			float gsz = (GridSize * Zoom);
+			float offx = Offset.X - (float)Math.Truncate(Offset.X / gsz) * gsz;
+			float offy = Offset.Y - (float)Math.Truncate(Offset.Y / gsz) * gsz;
+
+			for (float x = offx; x < Width; x += gsz)
 			{
 				g.DrawLine(penGrid, x, 0, x, Height);
 			}
-			for (float y = 0; y < Height; y += (GridSize * Zoom))
+			for (float y = offy; y < Height; y += gsz)
 			{
 				g.DrawLine(penGrid, 0, y, Width, y);
 			}
@@ -276,21 +284,24 @@ namespace LayoutCeiling
 			}
 		}
 
-		public void DrawSelectArea(float x1, float y1, float x2, float y2)
+		public void DrawSelectArea(Point2 pos, Point2 size)
 		{
-			//TODO: рисовать прямоугольник выделения
+			pos = ToViewportSpace(pos);
+			size *= Zoom; 
+			g.DrawRectangle(penSelectArea, pos.X, pos.Y, size.X, size.Y);
 		}
 
 		public Point2 ToViewportSpace(Point2 p)
 		{
-			p += Offset;
+//			p -= Offset + new Point2(Width / 2f, Height / 2f);
 			p *= Zoom;
+			p += Offset;// + new Point2(Width / 2f, Height / 2f);
 			return p;
 		}
 
 		public Point2 FromViewportSpace(Point p)
 		{
-			return new Point2(p.X / Zoom - Offset.X, p.Y / Zoom - Offset.Y);
+			return new Point2((p.X - Offset.X/* + Width/2*/) / Zoom/* - Width/2 - Offset.X*/, (p.Y - Offset.Y/* + Height/2*/) / Zoom/* - Height/ 2 - Offset.X*/);
 		}
 	}
 }

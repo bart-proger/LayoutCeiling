@@ -152,21 +152,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="data\cursors\add.cur">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="data\cursors\pen.cur">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="data\cursors\remove.cur">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="data\cursors\rotate.cur">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="data\cursors\scale.cur">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="data\cursors\add.cur" />
+    <Content Include="data\cursors\hand.cur" />
+    <Content Include="data\cursors\pen.cur" />
+    <Content Include="data\cursors\remove.cur" />
+    <Content Include="data\cursors\rotate.cur" />
+    <Content Include="data\cursors\scale.cur" />
     <Content Include="data\icons\act_redo_s.png" />
     <Content Include="data\icons\act_undo_s.png" />
     <None Include="data\icons\tool_handTool.png" />

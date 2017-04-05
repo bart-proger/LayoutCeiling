@@ -21,6 +21,11 @@ namespace LayoutCeiling.Actions
 		{
 			mainForm.viewport.Zoom *= 1.3f;
 
+			Point2 center = new Point2(mainForm.viewport.Width / 2f, mainForm.viewport.Height / 2f);
+			Point2 locOff = mainForm.viewport.Offset - center;
+
+			mainForm.viewport.Offset = locOff * 1.3f + center;
+
 			base.OnActionClick(sender, e);
 		}
 	}
@@ -39,6 +44,13 @@ namespace LayoutCeiling.Actions
 		{
 			mainForm.viewport.Zoom /= 1.3f;
 
+			Point2 center = new Point2(mainForm.viewport.Width / 2f, mainForm.viewport.Height / 2f);
+			Point2 locOff = mainForm.viewport.Offset - center;
+
+			mainForm.viewport.Offset = locOff / 1.3f + center;
+//			p.X = (float)(scaleX * localX + center.X);
+//			p.Y = (float)(scaleY * localY + center.Y);
+
 			base.OnActionClick(sender, e);
 		}
 	}
@@ -55,7 +67,13 @@ namespace LayoutCeiling.Actions
 
 		protected override void OnActionClick(object sender, EventArgs e)
 		{
+			float zoom = mainForm.viewport.Zoom;
 			mainForm.viewport.Zoom = 1.0f;
+
+			Point2 center = new Point2(mainForm.viewport.Width / 2f, mainForm.viewport.Height / 2f);
+			Point2 locOff = mainForm.viewport.Offset - center;
+
+			mainForm.viewport.Offset = locOff / zoom + center;
 
 			base.OnActionClick(sender, e);
 		}

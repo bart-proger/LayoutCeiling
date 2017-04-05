@@ -84,7 +84,6 @@ namespace LayoutCeiling.Tools
 		/*private enum MoveMode { Free, Linked, Strict }*/
 
 		/*private ToolMode toolMode;*/
-		private Pen pen;
 		protected Cursor cursorSelect, cursorAdd, cursorRemove;
 
 		protected SelectMode selectMode;
@@ -106,9 +105,6 @@ namespace LayoutCeiling.Tools
 			toolButton.Click += OnToolClick;
 
 			selecting = false;
-			pen = new Pen(Color.FromArgb(128, Color.Black));
-			pen.DashCap = System.Drawing.Drawing2D.DashCap.Flat;
-			pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
 
 			selectMode = SelectMode.New;
 			cursorAdd = CustomCursor.Create("data/cursors/add.cur");
@@ -311,10 +307,10 @@ namespace LayoutCeiling.Tools
 					mainForm.viewport.DrawPoint(mainForm.layout.points[i], drawStyle);
 				}
 
-				Point2 rectPos = mainForm.viewport.ToViewportSpace(new Point2(left, top));
-				Point2 rectSize = mainForm.viewport.ToViewportSpace(new Point2(right - left, bottom - top));
-				g.DrawRectangle(pen, rectPos.X, rectPos.Y, rectSize.X, rectSize.Y);
-				mainForm.viewport.DrawSelectArea();
+				Point2 pos = new Point2(left, top);
+				Point2 size = new Point2(right - left, bottom - top);
+				
+				mainForm.viewport.DrawSelectArea(pos, size);
 			}
 		}
 	}
