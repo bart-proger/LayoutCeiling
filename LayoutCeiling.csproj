@@ -65,47 +65,47 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Action.cs" />
-    <Compile Include="Actions\DeletePoint.cs" />
-    <Compile Include="Actions\SelectAll.cs" />
-    <Compile Include="Actions\Undo.cs" />
-    <Compile Include="Actions\Redo.cs" />
-    <Compile Include="Actions\ZoomInOut.cs" />
-    <Compile Include="CeilingLayuot.cs" />
-    <Compile Include="CustomCursor.cs" />
-    <Compile Include="MainForm.cs">
+    <Compile Include="src\Action.cs" />
+    <Compile Include="src\Actions\DeletePoint.cs" />
+    <Compile Include="src\Actions\SelectAll.cs" />
+    <Compile Include="src\Actions\Undo.cs" />
+    <Compile Include="src\Actions\Redo.cs" />
+    <Compile Include="src\Actions\ZoomInOut.cs" />
+    <Compile Include="src\CeilingLayuot.cs" />
+    <Compile Include="src\CustomCursor.cs" />
+    <Compile Include="src\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm.Designer.cs">
+    <Compile Include="src\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Geometry.cs" />
-    <Compile Include="Point2.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="src\Geometry.cs" />
+    <Compile Include="src\Point2.cs" />
+    <Compile Include="src\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Selection.cs" />
-    <Compile Include="Tool.cs" />
-    <Compile Include="ToolStripRadioButton.cs">
+    <Compile Include="src\Selection.cs" />
+    <Compile Include="src\Tool.cs" />
+    <Compile Include="src\ToolStripRadioButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Tools\AddPolygon.cs" />
-    <Compile Include="Tools\HandTool.cs" />
-    <Compile Include="Tools\Select.cs" />
-    <Compile Include="Tools\SelectAndMove.cs" />
-    <Compile Include="Tools\SelectAndScale.cs" />
-    <Compile Include="Tools\SelectAndRotate.cs" />
-    <Compile Include="Tools\AddPoint.cs" />
-    <Compile Include="UndoCommand.cs" />
-    <Compile Include="UndoStack.cs" />
-    <Compile Include="Viewport.cs">
+    <Compile Include="src\Tools\AddPolygon.cs" />
+    <Compile Include="src\Tools\HandTool.cs" />
+    <Compile Include="src\Tools\Select.cs" />
+    <Compile Include="src\Tools\SelectAndMove.cs" />
+    <Compile Include="src\Tools\SelectAndScale.cs" />
+    <Compile Include="src\Tools\SelectAndRotate.cs" />
+    <Compile Include="src\Tools\AddPoint.cs" />
+    <Compile Include="src\UndoCommand.cs" />
+    <Compile Include="src\UndoStack.cs" />
+    <Compile Include="src\Viewport.cs">
       <SubType>Component</SubType>
     </Compile>
-    <EmbeddedResource Include="MainForm.resx">
+    <EmbeddedResource Include="src\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
