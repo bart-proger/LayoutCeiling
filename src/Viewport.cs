@@ -113,7 +113,7 @@ namespace LayoutCeiling
 
 		private void OnMouseMove(object sender, MouseEventArgs e)
 		{
-			p = ToRealSpace(e.Location);
+			p = ToLayoutSpace(e.Location);
 
 			if (mainForm.activeTool != null)
 				mainForm.activeTool.OnMouseMove(e, p);
@@ -122,7 +122,7 @@ namespace LayoutCeiling
 
 		private void OnMouseUp(object sender, MouseEventArgs e)
 		{
-			p = ToRealSpace(e.Location);
+			p = ToLayoutSpace(e.Location);
 
 			if (mainForm.activeTool != null)
 				mainForm.activeTool.OnMouseUp(e, p);
@@ -131,7 +131,7 @@ namespace LayoutCeiling
 
 		private void OnMouseDown(object sender, MouseEventArgs e)
 		{
-			p = ToRealSpace(e.Location);
+			p = ToLayoutSpace(e.Location);
 
 			if (mainForm.activeTool != null)
 				mainForm.activeTool.OnMouseDown(e, p);
@@ -140,7 +140,7 @@ namespace LayoutCeiling
 
 		public void DrawPoint(Point2 point, DrawStyle style)
 		{
-			point = ToCameraSpace(point);
+			point = ToViewportSpace(point);
 
 			float psz = PointSize/* / Zoom*/;
 
@@ -165,8 +165,8 @@ namespace LayoutCeiling
 			RectangleF lenRect = new RectangleF();
 			lenRect.Size = g.MeasureString(len, fontLen);
 
-			p1 = ToCameraSpace(p1);
-			p2 = ToCameraSpace(p2);
+			p1 = ToViewportSpace(p1);
+			p2 = ToViewportSpace(p2);
 
 			Point2 lenPos = new Point2(p1.X + (p2.X - p1.X) / 2 - lenRect.Size.Width / 2, p1.Y + (p2.Y - p1.Y) / 2 - lenRect.Size.Height / 2);
 			lenRect.Location = lenPos.ToPointF();
@@ -223,7 +223,7 @@ namespace LayoutCeiling
 				Point[] pointsArray = new Point[layout.points.Count];
 				for (int i = 0; i < layout.points.Count; ++i)
 				{
-					pointsArray[i] = ToCameraSpace(layout.points[i]).ToPoint();
+					pointsArray[i] = ToViewportSpace(layout.points[i]).ToPoint();
 				}
 				g.FillPolygon(Brushes.White, pointsArray);
 			}
@@ -249,7 +249,7 @@ namespace LayoutCeiling
 					DrawPoint(p, DrawStyle.Normal);
 				}
 
-				p = ToCameraSpace(p);
+				p = ToViewportSpace(p);
 				g.DrawString(CeilingLayout.PointLetter(i), fontLetter, Brushes.Black, p.X + 2, p.Y + 2);
 			}
 		}
@@ -272,8 +272,8 @@ namespace LayoutCeiling
 
 		public void DrawPivot()
 		{
-			int x = (int)ToCameraSpace(mainForm.selection.Pivot).X;
-			int y = (int)ToCameraSpace(mainForm.selection.Pivot).Y;
+			int x = (int)ToViewportSpace(mainForm.selection.Pivot).X;
+			int y = (int)ToViewportSpace(mainForm.selection.Pivot).Y;
 
 			if (mainForm.selection.indices.Count > 0)
 			{
@@ -285,17 +285,17 @@ namespace LayoutCeiling
 
 		public void DrawSelectArea(Point2 pos, Point2 size)
 		{
-			pos = ToCameraSpace(pos);
+			pos = ToViewportSpace(pos);
 			size *= Zoom; 
 			g.DrawRectangle(penSelectArea, pos.X, pos.Y, size.X, size.Y);
 		}
 
-		public Point2 ToCameraSpace(Point2 p)
+		public Point2 ToViewportSpace(Point2 p)
 		{
 			return (p - Center) * Zoom + (Offset + Center);
 		}
 
-		public Point2 ToRealSpace(Point p)
+		public Point2 ToLayoutSpace(Point p)
 		{
 			return (Point2.FromPoint(p) - (Offset + Center)) / Zoom + Center;
 		}
@@ -303,7 +303,7 @@ namespace LayoutCeiling
 		public int PointIndexAtCoord(Point2 coord)
 		{
 			for (int i = 0; i < mainForm.layout.points.Count; ++i)
-				if (coord.DistanceTo(mainForm.layout.points[i]) <= mainForm.viewport.PointSize /*/ 2*/ / mainForm.viewport.Zoom)
+				if (coord.DistanceTo(mainForm.layout.points[i]) <= mainForm.viewport.PointSize / mainForm.viewport.Zoom)
 					return i;
 
 			return -1;

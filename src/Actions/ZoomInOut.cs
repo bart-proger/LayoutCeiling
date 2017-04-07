@@ -74,10 +74,15 @@ namespace LayoutCeiling.Actions
 		protected override void OnActionClick(object sender, EventArgs e)
 		{
 			float oldZoom = mainForm.viewport.Zoom;
-			float lw = mainForm.layout.Width();
-			float lh = mainForm.layout.Height();
+
+			float ww = (mainForm.viewport.Width - 50) / mainForm.layout.Width();
+			float hh = (mainForm.viewport.Height - 50) / mainForm.layout.Height();
 			//TODO: w?h zoom
-			mainForm.viewport.Zoom = Math.Min(mainForm.viewport.Width - 20, mainForm.viewport.Height - 20) / Math.Max(lw, lh);
+			if (ww < hh)
+				mainForm.viewport.Zoom = ww;
+			else
+				mainForm.viewport.Zoom = hh;
+
 			mainForm.viewport.Offset = (mainForm.viewport.Center - mainForm.layout.CenterBBox()) * mainForm.viewport.Zoom;
 
 			base.OnActionClick(sender, e);
