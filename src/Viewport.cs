@@ -44,6 +44,9 @@ namespace LayoutCeiling
 			// 												});
 			//			redrawTimer.Start();
 
+			SetStyle(ControlStyles.Selectable, true);
+			TabStop = true;
+
 			BackColor = source.BackColor;
 			BorderStyle = source.BorderStyle;
 			Location = source.Location;
@@ -56,8 +59,9 @@ namespace LayoutCeiling
 			MouseWheel += OnMouseWheel;
 
 			graphics = Graphics.FromHwnd(Handle);
-			backBuffer = new Bitmap(Width, Height, graphics);
-			backBufferRect = new Rectangle(0, 0, Width, Height);
+			backBufferRect = ClientRectangle;
+			backBufferRect.Inflate(-2, -2);
+			backBuffer = new Bitmap(backBufferRect.Width, backBufferRect.Height, graphics);
 			g = Graphics.FromImage(backBuffer);
 
 			penNormal = new Pen(Color.Black, 2);
@@ -72,9 +76,41 @@ namespace LayoutCeiling
 			//g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 		}
 
+		protected override bool IsInputKey(Keys keyData)
+		{
+			if (keyData == Keys.Up || keyData == Keys.Down) return true;
+			if (keyData == Keys.Left || keyData == Keys.Right) return true;
+			return base.IsInputKey(keyData);
+		}
+
+		protected override void OnEnter(EventArgs e)
+		{
+			Invalidate();
+			base.OnEnter(e);
+		}
+		protected override void OnLeave(EventArgs e)
+		{
+			Invalidate();
+			base.OnLeave(e);
+		}
+
+		protected override void OnPaint(PaintEventArgs e)
+		{
+			base.OnPaint(e);
+
+			if (Focused)
+			{
+				var r = ClientRectangle;
+				r.Inflate(-1, -1);
+				ControlPaint.DrawFocusRectangle(graphics, r);
+			}
+
+			Draw();
+		}
+
 		private void OnMouseWheel(object sender, MouseEventArgs e)
 		{
-			Zoom += e.Delta * 0.1f;
+			//zoom ??
 		}
 
 		public void Draw()
@@ -92,10 +128,10 @@ namespace LayoutCeiling
 			g.ResetTransform();
 			// info
 			g.DrawString("select: " + mainForm.selection.indices.Count.ToString(), Font, Brushes.Gray, 2, 2);
-			g.DrawString("P = " + mainForm.layout.Perimeter().ToString("#.#") + " см", Font, Brushes.Gray, 2, 22);
-			g.DrawString(p.ToString(), Font, Brushes.Gray, 2, 42);
-			g.DrawString("zoom: " + (Zoom * 100).ToString("#.#") + "%", Font, Brushes.Gray, 2, 62);
-			g.DrawString("offset " + Offset.ToString(), Font, Brushes.Gray, 2, 72);
+			g.DrawString("P = " + mainForm.layout.Perimeter().ToString("0.#") + " см", Font, Brushes.Gray, 2, 22);
+			//g.DrawString(p.ToString(), Font, Brushes.Gray, 2, 42);
+			g.DrawString("zoom: " + (Zoom * 100).ToString("0.#") + "%", Font, Brushes.Gray, 2, 62);
+			g.DrawString("offset " + Offset.ToString(), Font, Brushes.Gray, 2, 82);
 
 			g.Flush();
 			graphics.DrawImage(backBuffer, backBufferRect);
@@ -109,32 +145,26 @@ namespace LayoutCeiling
 			mainForm.lbUndoStack.SelectedIndex = mainForm.undoStack.Index();
 		}
 
-		Point2 p;
-
 		private void OnMouseMove(object sender, MouseEventArgs e)
 		{
-			p = ToLayoutSpace(e.Location);
-
 			if (mainForm.activeTool != null)
-				mainForm.activeTool.OnMouseMove(e, p);
+				mainForm.activeTool.OnMouseMove(e, ToLayoutSpace(e.Location));
 			Draw();
 		}
 
 		private void OnMouseUp(object sender, MouseEventArgs e)
 		{
-			p = ToLayoutSpace(e.Location);
-
 			if (mainForm.activeTool != null)
-				mainForm.activeTool.OnMouseUp(e, p);
+				mainForm.activeTool.OnMouseUp(e, ToLayoutSpace(e.Location));
 			Draw();
 		}
 
 		private void OnMouseDown(object sender, MouseEventArgs e)
 		{
-			p = ToLayoutSpace(e.Location);
+			Focus();
 
 			if (mainForm.activeTool != null)
-				mainForm.activeTool.OnMouseDown(e, p);
+				mainForm.activeTool.OnMouseDown(e, ToLayoutSpace(e.Location));
 			Draw();
 		}
 
@@ -268,6 +298,11 @@ namespace LayoutCeiling
 			{
 				g.DrawLine(penGrid, 0, y, Width, y);
 			}
+
+			Point2 p1, p2;
+			p1 = ToViewportSpace(new Point2(0, 0));
+			p2 = ToViewportSpace(new Point2(1000, 0));
+			g.DrawLine(penNormal, p1.X, p1.Y, p2.X, p2.Y);
 		}
 
 		public void DrawPivot()

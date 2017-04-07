@@ -77,7 +77,7 @@ namespace LayoutCeiling.Actions
 
 			float ww = (mainForm.viewport.Width - 50) / mainForm.layout.Width();
 			float hh = (mainForm.viewport.Height - 50) / mainForm.layout.Height();
-			//TODO: w?h zoom
+			
 			if (ww < hh)
 				mainForm.viewport.Zoom = ww;
 			else
@@ -87,5 +87,6 @@ namespace LayoutCeiling.Actions
 
 			base.OnActionClick(sender, e);
 		}
+		//TODO: zoom доступень только если есть макет
 	}
 }

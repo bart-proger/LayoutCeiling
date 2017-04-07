@@ -77,7 +77,7 @@
 			this.lbUndoStack.FormattingEnabled = true;
 			this.lbUndoStack.Location = new System.Drawing.Point(641, 91);
 			this.lbUndoStack.Name = "lbUndoStack";
-			this.lbUndoStack.Size = new System.Drawing.Size(161, 407);
+			this.lbUndoStack.Size = new System.Drawing.Size(161, 433);
 			this.lbUndoStack.TabIndex = 4;
 			// 
 			// newToolStripMenuItem
