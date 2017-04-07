@@ -60,6 +60,11 @@ namespace LayoutCeiling
 			return (a._x != b._x || a._y != b._y);
 		}
 
+		public static Point2 operator -(Point2 a)
+		{
+			return new Point2(-a._x, -a._y);
+		}
+
 		public static Point2 operator+(Point2 a, Point2 b)
 		{
 			return new Point2(a._x + b._x, a._y + b._y);

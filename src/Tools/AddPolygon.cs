@@ -13,12 +13,16 @@ namespace LayoutCeiling.Tools
 		//TODO: undo/redo cmd
 
 		Cursor cursorPen;
+		Cursor cursorPenFinish;
 		Point2 newPoint;
 		List<Point2> polygon;
+
+		bool finish;
 
 		public AddPolygon(MainForm form) : base(form, "Многоугольник")
 		{
 			cursorPen = CustomCursor.Create("data/cursors/pen.cur");
+			cursorPenFinish = CustomCursor.Create("data/cursors/penFinish.cur");
 
 			ToolStripItem = new ToolStripRadioButton();
 
@@ -30,18 +34,30 @@ namespace LayoutCeiling.Tools
 			toolButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
 
 			polygon = new List<Point2>();
+			finish = false;
 		}
 
 		public override void OnMouseMove(MouseEventArgs e, Point2 p)
 		{
 			newPoint = p;
+
+			if (polygon.Count > 2 && p.DistanceTo(polygon.First()) <= mainForm.viewport.PointSize / mainForm.viewport.Zoom)
+			{
+				mainForm.viewport.Cursor = cursorPenFinish;
+				finish = true;
+			}
+			else
+			{
+				mainForm.viewport.Cursor = cursorPen;
+				finish = false;
+			}
 		}
 
 		public override void OnMouseUp(MouseEventArgs e, Point2 p)
 		{
 			if (e.Button == MouseButtons.Left)
 			{
-				if (polygon.Count > 0 && newPoint.DistanceTo(polygon.First()) <= mainForm.viewport.PointSize / 2)
+				if (finish)
 				{
 					ApplyChanges();
 					mainForm.selection.UnselectAll();

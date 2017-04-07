@@ -16,11 +16,7 @@ namespace LayoutCeiling.Actions
 		protected override void OnActionClick(object sender, EventArgs e)
 		{
 			mainForm.viewport.Zoom *= 1.3f;
-
-			Point2 center = new Point2(mainForm.viewport.Width / 2f, mainForm.viewport.Height / 2f);
-			Point2 locOff = mainForm.viewport.Offset - center;
-
-			mainForm.viewport.Offset = locOff * 1.3f + center;
+			mainForm.viewport.Offset *= 1.3f;
 
 			base.OnActionClick(sender, e);
 		}
@@ -39,13 +35,7 @@ namespace LayoutCeiling.Actions
 		protected override void OnActionClick(object sender, EventArgs e)
 		{
 			mainForm.viewport.Zoom /= 1.3f;
-
-			Point2 center = new Point2(mainForm.viewport.Width / 2f, mainForm.viewport.Height / 2f);
-			Point2 locOff = mainForm.viewport.Offset - center;
-
-			mainForm.viewport.Offset = locOff / 1.3f + center;
-//			p.X = (float)(scaleX * localX + center.X);
-//			p.Y = (float)(scaleY * localY + center.Y);
+			mainForm.viewport.Offset /= 1.3f;
 
 			base.OnActionClick(sender, e);
 		}
@@ -63,13 +53,32 @@ namespace LayoutCeiling.Actions
 
 		protected override void OnActionClick(object sender, EventArgs e)
 		{
-			float zoom = mainForm.viewport.Zoom;
+			float oldZoom = mainForm.viewport.Zoom;
 			mainForm.viewport.Zoom = 1.0f;
+			mainForm.viewport.Offset /= oldZoom;
 
-			Point2 center = new Point2(mainForm.viewport.Width / 2f, mainForm.viewport.Height / 2f);
-			Point2 locOff = mainForm.viewport.Offset - center;
+			base.OnActionClick(sender, e);
+		}
+	}
 
-			mainForm.viewport.Offset = locOff / zoom + center;
+	class ZoomByLayout : Action
+	{
+		public ZoomByLayout(MainForm form) : base(form, "Масштаб по макету", Keys.Control | Keys.NumPad0)
+		{
+			MenuItem = new ToolStripMenuItem(name);
+			MenuItem.ShowShortcutKeys = true;
+			MenuItem.ShortcutKeys = hotKeys;
+			MenuItem.Click += OnActionClick;
+		}
+
+		protected override void OnActionClick(object sender, EventArgs e)
+		{
+			float oldZoom = mainForm.viewport.Zoom;
+			float lw = mainForm.layout.Width();
+			float lh = mainForm.layout.Height();
+			//TODO: w?h zoom
+			mainForm.viewport.Zoom = Math.Min(mainForm.viewport.Width - 20, mainForm.viewport.Height - 20) / Math.Max(lw, lh);
+			mainForm.viewport.Offset = (mainForm.viewport.Center - mainForm.layout.CenterBBox()) * mainForm.viewport.Zoom;
 
 			base.OnActionClick(sender, e);
 		}

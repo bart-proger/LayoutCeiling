@@ -25,6 +25,7 @@ namespace LayoutCeiling
 
 		public float Zoom { set; get; }
 		public Point2 Offset { set; get; }
+		public Point2 Center { get { return new Point2(Width / 2f, Height / 2f); } }
 
 		public Viewport(MainForm mainForm, Panel source)
 			: base()
@@ -94,6 +95,7 @@ namespace LayoutCeiling
 			g.DrawString("P = " + mainForm.layout.Perimeter().ToString("#.#") + " см", Font, Brushes.Gray, 2, 22);
 			g.DrawString(p.ToString(), Font, Brushes.Gray, 2, 42);
 			g.DrawString("zoom: " + (Zoom * 100).ToString("#.#") + "%", Font, Brushes.Gray, 2, 62);
+			g.DrawString("offset " + Offset.ToString(), Font, Brushes.Gray, 2, 72);
 
 			g.Flush();
 			graphics.DrawImage(backBuffer, backBufferRect);
@@ -111,7 +113,7 @@ namespace LayoutCeiling
 
 		private void OnMouseMove(object sender, MouseEventArgs e)
 		{
-			p = FromViewportSpace(e.Location);
+			p = ToRealSpace(e.Location);
 
 			if (mainForm.activeTool != null)
 				mainForm.activeTool.OnMouseMove(e, p);
@@ -120,7 +122,7 @@ namespace LayoutCeiling
 
 		private void OnMouseUp(object sender, MouseEventArgs e)
 		{
-			p = FromViewportSpace(e.Location);
+			p = ToRealSpace(e.Location);
 
 			if (mainForm.activeTool != null)
 				mainForm.activeTool.OnMouseUp(e, p);
@@ -129,7 +131,7 @@ namespace LayoutCeiling
 
 		private void OnMouseDown(object sender, MouseEventArgs e)
 		{
-			p = FromViewportSpace(e.Location);
+			p = ToRealSpace(e.Location);
 
 			if (mainForm.activeTool != null)
 				mainForm.activeTool.OnMouseDown(e, p);
@@ -138,7 +140,7 @@ namespace LayoutCeiling
 
 		public void DrawPoint(Point2 point, DrawStyle style)
 		{
-			point = ToViewportSpace(point);
+			point = ToCameraSpace(point);
 
 			float psz = PointSize/* / Zoom*/;
 
@@ -163,8 +165,8 @@ namespace LayoutCeiling
 			RectangleF lenRect = new RectangleF();
 			lenRect.Size = g.MeasureString(len, fontLen);
 
-			p1 = ToViewportSpace(p1);
-			p2 = ToViewportSpace(p2);
+			p1 = ToCameraSpace(p1);
+			p2 = ToCameraSpace(p2);
 
 			Point2 lenPos = new Point2(p1.X + (p2.X - p1.X) / 2 - lenRect.Size.Width / 2, p1.Y + (p2.Y - p1.Y) / 2 - lenRect.Size.Height / 2);
 			lenRect.Location = lenPos.ToPointF();
@@ -218,11 +220,10 @@ namespace LayoutCeiling
 
 			if (layout.points.Count > 2)
 			{
-				PointF[] pointsArray = new PointF[layout.points.Count];
+				Point[] pointsArray = new Point[layout.points.Count];
 				for (int i = 0; i < layout.points.Count; ++i)
 				{
-					pointsArray[i].X = layout.points[i].X * Zoom + Offset.X;
-					pointsArray[i].Y = layout.points[i].Y * Zoom + Offset.Y;
+					pointsArray[i] = ToCameraSpace(layout.points[i]).ToPoint();
 				}
 				g.FillPolygon(Brushes.White, pointsArray);
 			}
@@ -248,7 +249,7 @@ namespace LayoutCeiling
 					DrawPoint(p, DrawStyle.Normal);
 				}
 
-				p = ToViewportSpace(p);
+				p = ToCameraSpace(p);
 				g.DrawString(CeilingLayout.PointLetter(i), fontLetter, Brushes.Black, p.X + 2, p.Y + 2);
 			}
 		}
@@ -271,8 +272,8 @@ namespace LayoutCeiling
 
 		public void DrawPivot()
 		{
-			int x = (int)ToViewportSpace(mainForm.selection.Pivot).X;
-			int y = (int)ToViewportSpace(mainForm.selection.Pivot).Y;
+			int x = (int)ToCameraSpace(mainForm.selection.Pivot).X;
+			int y = (int)ToCameraSpace(mainForm.selection.Pivot).Y;
 
 			if (mainForm.selection.indices.Count > 0)
 			{
@@ -284,22 +285,28 @@ namespace LayoutCeiling
 
 		public void DrawSelectArea(Point2 pos, Point2 size)
 		{
-			pos = ToViewportSpace(pos);
+			pos = ToCameraSpace(pos);
 			size *= Zoom; 
 			g.DrawRectangle(penSelectArea, pos.X, pos.Y, size.X, size.Y);
 		}
 
-		public Point2 ToViewportSpace(Point2 p)
+		public Point2 ToCameraSpace(Point2 p)
 		{
-//			p -= Offset + new Point2(Width / 2f, Height / 2f);
-			p *= Zoom;
-			p += Offset;// + new Point2(Width / 2f, Height / 2f);
-			return p;
+			return (p - Center) * Zoom + (Offset + Center);
 		}
 
-		public Point2 FromViewportSpace(Point p)
+		public Point2 ToRealSpace(Point p)
 		{
-			return new Point2((p.X - Offset.X/* + Width/2*/) / Zoom/* - Width/2 - Offset.X*/, (p.Y - Offset.Y/* + Height/2*/) / Zoom/* - Height/ 2 - Offset.X*/);
+			return (Point2.FromPoint(p) - (Offset + Center)) / Zoom + Center;
+		}
+
+		public int PointIndexAtCoord(Point2 coord)
+		{
+			for (int i = 0; i < mainForm.layout.points.Count; ++i)
+				if (coord.DistanceTo(mainForm.layout.points[i]) <= mainForm.viewport.PointSize /*/ 2*/ / mainForm.viewport.Zoom)
+					return i;
+
+			return -1;
 		}
 	}
 }

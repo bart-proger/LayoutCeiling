@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LayoutCeiling
 {
@@ -61,6 +57,73 @@ namespace LayoutCeiling
 			center /= indices.Count;
 
 			return center;
+		}
+
+		public Point2 CenterBBox()
+		{
+			Point2 center = new Point2(0, 0);
+			if (points.Count == 0)
+				return center;
+			if (points.Count == 1)
+			{
+				center = points.First();
+				return center;
+			}
+
+			Point2 min, max;
+			min = max = points.First();
+			foreach (var p in points)
+			{
+				if (p.X < min.X)
+					min.X = p.X;
+				if (p.Y < min.Y)
+					min.Y = p.Y;
+				if (p.X > max.X)
+					max.X = p.X;
+				if (p.Y > max.Y)
+					max.Y = p.Y;
+			}
+			center = (min + max) / 2;
+
+			return center;
+		}
+
+		public float Width()
+		{
+			if (points.Count == 0)
+				return 0f;
+
+			float min, max;
+			min = max = points.First().X;
+
+			foreach (var p in points)
+			{
+				if (min > p.X)
+					min = p.X;
+				if (max < p.X)
+					max = p.X;
+			}
+
+			return max - min;
+		}
+
+		public float Height()
+		{
+			if (points.Count == 0)
+				return 0f;
+
+			float min, max;
+			min = max = points.First().Y;
+
+			foreach (var p in points)
+			{
+				if (min > p.Y)
+					min = p.Y;
+				if (max < p.Y)
+					max = p.Y;
+			}
+
+			return max - min;
 		}
 	}
 }

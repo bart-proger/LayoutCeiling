@@ -142,24 +142,21 @@ namespace LayoutCeiling.Tools
 
 			if (from == to)
 			{
-				for (int i = 0; i < mainForm.layout.points.Count; ++i)
+				int index = mainForm.viewport.PointIndexAtCoord(from);
+				if (index > -1)
 				{
-					if (from.DistanceTo(mainForm.layout.points[i]) <= mainForm.viewport.PointSize /*/ 2*/ / mainForm.viewport.Zoom)
+					bool add = true;
+					switch (selectMode)
 					{
-						bool add = true;
-						switch (selectMode)
-						{
-							case SelectMode.Add:
-								add = !mainForm.selection.Contains(i);
-								break;
-							case SelectMode.Remove:
-								add = mainForm.selection.Contains(i);
-								break;
-						}
-						if (add)
-							pointsInSelectArea.Add(i);
-						break;
+						case SelectMode.Add:
+							add = !mainForm.selection.Contains(index);
+							break;
+						case SelectMode.Remove:
+							add = mainForm.selection.Contains(index);
+							break;
 					}
+					if (add)
+						pointsInSelectArea.Add(index);
 				}
 				return;
 			}

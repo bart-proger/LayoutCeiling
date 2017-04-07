@@ -48,10 +48,10 @@ namespace LayoutCeiling
 			actions.Add(new Actions.Undo(this));
 			actions.Add(new Actions.Redo(this));
 			actions.Add(new Actions.DeletePoint(this));
-
 			actions.Add(new Actions.Zoom100(this));
 			actions.Add(new Actions.ZoomIn(this));
 			actions.Add(new Actions.ZoomOut(this));
+			actions.Add(new Actions.ZoomByLayout(this));
 
 			foreach (var act in actions)
 			{
