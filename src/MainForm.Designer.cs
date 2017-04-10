@@ -34,6 +34,7 @@
 			this.panel = new System.Windows.Forms.Panel();
 			this.lbUndoStack = new System.Windows.Forms.ListBox();
 			this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.addTools = new System.Windows.Forms.ToolStrip();
 			this.mainMenu.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -43,7 +44,7 @@
             this.mmEdit});
 			this.mainMenu.Location = new System.Drawing.Point(0, 0);
 			this.mainMenu.Name = "mainMenu";
-			this.mainMenu.Size = new System.Drawing.Size(850, 24);
+			this.mainMenu.Size = new System.Drawing.Size(872, 24);
 			this.mainMenu.TabIndex = 0;
 			this.mainMenu.Text = "menuStrip1";
 			// 
@@ -59,7 +60,7 @@
 			this.editTools.Location = new System.Drawing.Point(0, 24);
 			this.editTools.MinimumSize = new System.Drawing.Size(0, 39);
 			this.editTools.Name = "editTools";
-			this.editTools.Size = new System.Drawing.Size(850, 39);
+			this.editTools.Size = new System.Drawing.Size(872, 39);
 			this.editTools.TabIndex = 1;
 			this.editTools.Text = "Инструменты";
 			// 
@@ -67,7 +68,8 @@
 			// 
 			this.panel.BackColor = System.Drawing.Color.White;
 			this.panel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.panel.Location = new System.Drawing.Point(12, 91);
+			this.panel.Location = new System.Drawing.Point(14, 107);
+			this.panel.Margin = new System.Windows.Forms.Padding(5);
 			this.panel.Name = "panel";
 			this.panel.Size = new System.Drawing.Size(612, 433);
 			this.panel.TabIndex = 2;
@@ -75,7 +77,7 @@
 			// lbUndoStack
 			// 
 			this.lbUndoStack.FormattingEnabled = true;
-			this.lbUndoStack.Location = new System.Drawing.Point(641, 91);
+			this.lbUndoStack.Location = new System.Drawing.Point(650, 107);
 			this.lbUndoStack.Name = "lbUndoStack";
 			this.lbUndoStack.Size = new System.Drawing.Size(161, 433);
 			this.lbUndoStack.TabIndex = 4;
@@ -87,11 +89,22 @@
 			this.newToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
 			this.newToolStripMenuItem.Text = "New";
 			// 
+			// shapeTools
+			// 
+			this.addTools.ImageScalingSize = new System.Drawing.Size(32, 32);
+			this.addTools.Location = new System.Drawing.Point(0, 63);
+			this.addTools.MinimumSize = new System.Drawing.Size(0, 39);
+			this.addTools.Name = "shapeTools";
+			this.addTools.Size = new System.Drawing.Size(872, 39);
+			this.addTools.TabIndex = 5;
+			this.addTools.Text = "Фигуры";
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(850, 536);
+			this.ClientSize = new System.Drawing.Size(872, 566);
+			this.Controls.Add(this.addTools);
 			this.Controls.Add(this.lbUndoStack);
 			this.Controls.Add(this.panel);
 			this.Controls.Add(this.editTools);
@@ -120,6 +133,7 @@
 		public  System.Windows.Forms.ListBox lbUndoStack;
 		private System.Windows.Forms.ToolStripMenuItem mmEdit;
 		private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
-    }
+		private System.Windows.Forms.ToolStrip addTools;
+	}
 }
 

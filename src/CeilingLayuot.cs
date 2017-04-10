@@ -5,14 +5,15 @@ namespace LayoutCeiling
 {
 	public class CeilingLayout
 	{
-		/*private MainForm mainForm;*/
-
+		public List<Shape> Shapes { get; set; }
 		public List<Point2> points;
+		public List<Point2> cutout;
 
-		public CeilingLayout(/*MainForm mainForm*/)
+		public CeilingLayout()
 		{
-			/*this.mainForm = mainForm;*/
+			Shapes = new List<Shape>();
 			points = new List<Point2>();
+			cutout = new List<Point2>();
 		}
 
 		public static string PointLetter(int index)

@@ -292,7 +292,7 @@ namespace LayoutCeiling.Tools
 			}
 		}
 
-		public override void DrawChagesPreview(Graphics g)
+		public override void DrawChangesPreview(Graphics g)
 		{
 			if (selecting)
 			{

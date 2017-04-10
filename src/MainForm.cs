@@ -37,10 +37,21 @@ namespace LayoutCeiling
 			tools.Add(new Tools.AddPolygon(this));
 			tools.Add(new Tools.AddPoint(this));
 			tools.Add(new Tools.HandTool(this));
+			tools.Add(new Tools.AddInnerCutout(this));
+
+			tools.Add(new AddTools.AddRectangle(this));
 
 			foreach (var tool in tools)
 			{
-				editTools.Items.Add(tool.ToolStripItem);
+				switch (tool.Group)
+				{
+					case Tool.ToolGroup.EditTools:
+						editTools.Items.Add(tool.ToolStripItem);
+						break;
+					case Tool.ToolGroup.AddTools:
+						addTools.Items.Add(tool.ToolStripItem);
+						break;
+				}
 			}
 
 			actions = new List<Action>();
@@ -60,16 +71,19 @@ namespace LayoutCeiling
 			}
 		}
 
+		const int WM_KEYUP = 0x101;
+
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
 		{
-			foreach (var t in tools)
-			{
-				if (keyData == t.HotKeys)
+			if (msg.Msg == WM_KEYUP)
+				foreach (var t in tools)
 				{
-					t.ToolStripItem.PerformClick();
-					break;
+					if (keyData == t.HotKeys)
+					{
+						t.ToolStripItem.PerformClick();
+						break;
+					}
 				}
-			}
 
 			return base.ProcessCmdKey(ref msg, keyData);
 		}
@@ -91,7 +105,7 @@ namespace LayoutCeiling
 		private void MainForm_Shown(object sender, EventArgs e)
 		{
 			editTools.Items[0].PerformClick();
-			editTools.Items[4].PerformClick();
+			addTools.Items[0].PerformClick();
 		}
 	}
 }

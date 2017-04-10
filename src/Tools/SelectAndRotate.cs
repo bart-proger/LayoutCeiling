@@ -178,7 +178,7 @@ namespace LayoutCeiling.Tools
 			}
 		}
 
-		public override void DrawChagesPreview(Graphics g)
+		public override void DrawChangesPreview(Graphics g)
 		{
 			mainForm.viewport.DrawPivot();
 
@@ -210,7 +210,7 @@ namespace LayoutCeiling.Tools
 			}
 			else
 			{
-				base.DrawChagesPreview(g);
+				base.DrawChangesPreview(g);
 			}
 		}
 

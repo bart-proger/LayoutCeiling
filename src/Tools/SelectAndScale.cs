@@ -122,8 +122,8 @@ namespace LayoutCeiling.Tools
 			if (scaling)
 			{
 				float dx = (to.X - from.X), dy = (to.Y - from.Y);
-				double dScaleX = dx * ScaleSize;
-				double dScaleY = -dy * ScaleSize;
+				double dScaleX = Math.Sign(from.X - mainForm.selection.Pivot.X) * dx * ScaleSize;
+				double dScaleY = Math.Sign(from.Y - mainForm.selection.Pivot.Y) * dy * ScaleSize;
 
 				if (dx != 0 || dy != 0)
 				{
@@ -197,15 +197,15 @@ namespace LayoutCeiling.Tools
 			}
 		}
 
-		public override void DrawChagesPreview(Graphics g)
+		public override void DrawChangesPreview(Graphics g)
 		{
 			mainForm.viewport.DrawPivot();
 
 			if (scaling)
 			{
 				float dx = (to.X - from.X), dy = (to.Y - from.Y);
-				double dScaleX = dx * ScaleSize;
-				double dScaleY = -dy * ScaleSize;
+				double dScaleX = Math.Sign(from.X - mainForm.selection.Pivot.X) * dx * ScaleSize;
+				double dScaleY = Math.Sign(from.Y - mainForm.selection.Pivot.Y) * dy * ScaleSize;
 
 				for (int i = 0; i < mainForm.selection.indices.Count; ++i)
 				{
@@ -230,7 +230,7 @@ namespace LayoutCeiling.Tools
 			}
 			else
 			{
-				base.DrawChagesPreview(g);
+				base.DrawChangesPreview(g);
 			}
 		}
 

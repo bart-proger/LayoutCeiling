@@ -6,14 +6,15 @@ namespace LayoutCeiling
 {
 	public abstract class Tool
 	{
-		//public enum ToolGroup { None = 0, EditTools = 1, AddTools = 2 }
+		public enum ToolGroup { EditTools = 0, AddTools = 1 }
 
 		protected string name;
 		protected string hint;
 		public Keys HotKeys { set; get; }
 
 		public ToolStripItem ToolStripItem { set; get; }
-		//public Form form;
+		public ToolGroup Group { get; set; }
+
 		protected Cursor cursor;
 
 		protected MainForm mainForm;
@@ -27,6 +28,7 @@ namespace LayoutCeiling
 			this.hint = name;
 			this.HotKeys = hotKeys;
 			ToolStripItem = null;
+			Group = ToolGroup.EditTools;
 			//form = null;
 			//cursor = Cursors.Default;
 			this.mainForm = mainForm;
@@ -48,7 +50,12 @@ namespace LayoutCeiling
 			if (ToolStripItem != null)
 				//ToolStripItem.PerformClick();
 				((ToolStripRadioButton)ToolStripItem).Checked = true;
-			prevTool = mainForm.activeTool;
+			if (mainForm.activeTool != this)
+			{
+				prevTool = mainForm.activeTool;
+				if (prevTool != null)
+					((ToolStripRadioButton)prevTool.ToolStripItem).Checked = false;
+			}
 			mainForm.activeTool = this;
 			mainForm.viewport.Cursor = cursor;
 			mainForm.viewport.Draw();
@@ -56,15 +63,15 @@ namespace LayoutCeiling
 
 		public virtual void DeactivateTool()
 		{
-		//	if (toolStripItem != null)
-			//	((ToolStripRadioButton)toolStripItem).Checked = false;
+			if (ToolStripItem != null)
+				((ToolStripRadioButton)ToolStripItem).Checked = false;
 			mainForm.viewport.Cursor = Cursors.Default;
 			if (prevTool != null)
 				//prevTool.ToolStripItem.PerformClick();
 				prevTool.ActivateTool();
 		}
 
-		public virtual void DrawChagesPreview(Graphics g) { }
+		public virtual void DrawChangesPreview(Graphics g) { }
 		public abstract void ApplyChanges();
 
 		public virtual void OnMouseMove(MouseEventArgs e, Point2 p) { }

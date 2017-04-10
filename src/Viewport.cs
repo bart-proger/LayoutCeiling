@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -122,8 +123,10 @@ namespace LayoutCeiling
 
 			DrawGrid();
 			DrawLayout(mainForm.layout);
+			DrawLayout2(mainForm.layout);
+
 			if (mainForm.activeTool != null)
-				mainForm.activeTool.DrawChagesPreview(g);
+				mainForm.activeTool.DrawChangesPreview(g);
 
 			g.ResetTransform();
 			// info
@@ -248,6 +251,20 @@ namespace LayoutCeiling
 				}
 			}
 
+			//inner cutout [
+			if (layout.cutout.Count > 2)
+			{
+				Point[] pointsArray = new Point[layout.cutout.Count];
+				for (int i = 0; i < layout.cutout.Count; ++i)
+				{
+					pointsArray[i] = ToViewportSpace(layout.cutout[i]).ToPoint();
+				}
+				GraphicsPath ph = new GraphicsPath();
+				ph.AddPolygon(pointsArray);
+				g.SetClip(new Region(ph), CombineMode.Exclude);
+			}
+
+			//base shape
 			if (layout.points.Count > 2)
 			{
 				Point[] pointsArray = new Point[layout.points.Count];
@@ -257,6 +274,8 @@ namespace LayoutCeiling
 				}
 				g.FillPolygon(Brushes.White, pointsArray);
 			}
+
+			//edges
 			if (layout.points.Count > 1)
 			{
 				for (int i = 0; i < layout.points.Count - 1; ++i)
@@ -267,6 +286,22 @@ namespace LayoutCeiling
 				//g.DrawLine(Pens.Black, layout.points.Last().X, layout.points.Last().Y, layout.points.First().X, layout.points.First().Y);
 				DrawLine(layout.points.Last(), layout.points.First(), xLines.Contains(layout.points.Count-1) ? DrawStyle.Error : DrawStyle.Normal);
 			}
+
+			// ] end cutting out
+			if (layout.cutout.Count > 2)
+				g.ResetClip();
+
+			//cutout contour
+			if (layout.cutout.Count > 1)
+			{
+				for (int i = 0; i < layout.cutout.Count - 1; ++i)
+				{
+					DrawLine(layout.cutout[i], layout.cutout[i + 1], /*xLines.Contains(i) ? DrawStyle.Error : */DrawStyle.Normal);
+				}
+				DrawLine(layout.cutout.Last(), layout.cutout.First(), /*xLines.Contains(layout.points.Count - 1) ? DrawStyle.Error : */DrawStyle.Normal);
+			}
+
+			//points letters
 			for (int i = 0; i < layout.points.Count; ++i)
 			{
 				Point2 p = layout.points[i];
@@ -284,8 +319,56 @@ namespace LayoutCeiling
 			}
 		}
 
+		private void DrawLayout2(CeilingLayout layout)
+		{
+			//base shape
+			int lettOffset = 0;
+			foreach (var shape in layout.Shapes)
+			{
+				if (shape.Points.Count > 2)
+				{
+					Point[] tmp = new Point[shape.Points.Count];
+					for (int i = 0; i < shape.Points.Count; ++i)
+					{
+						tmp[i] = ToViewportSpace(shape.Points[i]).ToPoint();
+					}
+					g.FillPolygon(Brushes.White, tmp);
+				}
+
+				//edges
+				if (shape.Points.Count > 1)
+				{
+					for (int i = 0; i < shape.Points.Count - 1; ++i)
+					{
+						DrawLine(shape.Points[i], shape.Points[i + 1], /*TODO: xLines.Contains(i) ? DrawStyle.Error : */DrawStyle.Normal);
+					}
+					DrawLine(shape.Points.Last(), shape.Points.First(), /*TODO: xLines.Contains(shape.Points.Count - 1) ? DrawStyle.Error : */DrawStyle.Normal);
+				}
+
+				//points letters
+				for (int i = 0; i < shape.Points.Count; ++i)
+				{
+					Point2 p = shape.Points[i];
+					if (mainForm.selection.Contains(i))
+					{
+						DrawPoint(p, DrawStyle.Selected);
+					}
+					else
+					{
+						DrawPoint(p, DrawStyle.Normal);
+					}
+
+					p = ToViewportSpace(p);
+					g.DrawString(CeilingLayout.PointLetter(i + lettOffset), fontLetter, Brushes.Black, p.X + 2, p.Y + 2);
+				}
+				lettOffset += shape.Points.Count;
+			}
+			//TODO: ......
+		}
+
 		private void DrawGrid()
 		{
+			//FIX: неправильно выводится сетка
  			float gsz = (GridSize * Zoom);
 			float offx = Offset.X - (float)Math.Truncate(Offset.X / gsz) * gsz;
 			float offy = Offset.Y - (float)Math.Truncate(Offset.Y / gsz) * gsz;
@@ -300,9 +383,12 @@ namespace LayoutCeiling
 			}
 
 			Point2 p1, p2;
-			p1 = ToViewportSpace(new Point2(0, 0));
+			p1 = ToViewportSpace(new Point2(0, 1000));
 			p2 = ToViewportSpace(new Point2(1000, 0));
-			g.DrawLine(penNormal, p1.X, p1.Y, p2.X, p2.Y);
+			g.DrawLine(penNormal, p1.X, p2.Y, p2.X, p2.Y);
+			g.DrawLine(penNormal, p1.X, p2.Y, p1.X, p1.Y);
+			//g.DrawLine(penNormal, p2.Y, p2.Y, p2.X, p2.Y);
+			//g.DrawLine(penNormal, p2.Y, p2.Y, p2.Y, p2.X);
 		}
 
 		public void DrawPivot()

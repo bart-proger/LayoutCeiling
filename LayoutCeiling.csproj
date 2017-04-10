@@ -65,6 +65,7 @@
     <Compile Include="src\Actions\Undo.cs" />
     <Compile Include="src\Actions\Redo.cs" />
     <Compile Include="src\Actions\ZoomInOut.cs" />
+    <Compile Include="src\AddShape.cs" />
     <Compile Include="src\CeilingLayuot.cs" />
     <Compile Include="src\CustomCursor.cs" />
     <Compile Include="src\MainForm.cs">
@@ -83,10 +84,13 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="src\Selection.cs" />
+    <Compile Include="src\AddTools\AddRectangle.cs" />
+    <Compile Include="src\Shape.cs" />
     <Compile Include="src\Tool.cs" />
     <Compile Include="src\ToolStripRadioButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="src\Tools\AddInnerCutout.cs" />
     <Compile Include="src\Tools\AddPolygon.cs" />
     <Compile Include="src\Tools\HandTool.cs" />
     <Compile Include="src\Tools\Select.cs" />
@@ -154,6 +158,8 @@
     <Content Include="data\cursors\scale.cur" />
     <Content Include="data\icons\act_redo_s.png" />
     <Content Include="data\icons\act_undo_s.png" />
+    <Content Include="data\icons\tool_innerCutout.png" />
+    <Content Include="data\icons\tool_rectangle.png" />
     <None Include="data\icons\tool_handTool.png" />
   </ItemGroup>
   <ItemGroup />

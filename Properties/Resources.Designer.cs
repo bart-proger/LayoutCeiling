@@ -133,9 +133,29 @@ namespace LayoutCeiling.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap tool_innerCutout {
+            get {
+                object obj = ResourceManager.GetObject("tool_innerCutout", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap tool_move {
             get {
                 object obj = ResourceManager.GetObject("tool_move", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap tool_rectangle {
+            get {
+                object obj = ResourceManager.GetObject("tool_rectangle", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

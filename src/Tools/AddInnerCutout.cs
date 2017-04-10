@@ -1,40 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LayoutCeiling.Tools
 {
-	public class AddPolygon : Tool
+	public class AddInnerCutout : Tool
 	{
 		//TODO: undo/redo cmd
 
 		Cursor cursorPen;
 		Cursor cursorPenFinish;
 		Point2 newPoint;
-		List<Point2> polygon;
+		List<Point2> cutout;
 
 		bool finish;
 
-		public AddPolygon(MainForm form) : base(form, "Многоугольник")
+		public AddInnerCutout(MainForm form) : base(form, "Внутренний вырез")
 		{
 			cursorPen = CustomCursor.Create("data/cursors/pen.cur");
 			cursorPenFinish = CustomCursor.Create("data/cursors/penFinish.cur");
-			Group = ToolGroup.AddTools;
 
 			ToolStripItem = new ToolStripRadioButton();
 
 			ToolStripRadioButton toolButton = (ToolStripRadioButton)ToolStripItem;
 			toolButton.Text = name;
 			toolButton.ToolTipText = hint;
-			toolButton.Image = LayoutCeiling.Properties.Resources.tool_addPolygon;
+			toolButton.Image = LayoutCeiling.Properties.Resources.tool_innerCutout;
 			toolButton.Click += OnToolClick;
 			toolButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
 
-			polygon = new List<Point2>();
+			cutout = new List<Point2>();
 			finish = false;
 		}
 
@@ -42,7 +38,7 @@ namespace LayoutCeiling.Tools
 		{
 			newPoint = p;
 
-			if (polygon.Count > 2 && p.DistanceTo(polygon.First()) <= mainForm.viewport.PointSize / mainForm.viewport.Zoom)
+			if (cutout.Count > 2 && p.DistanceTo(cutout.First()) <= mainForm.viewport.PointSize / mainForm.viewport.Zoom)
 			{
 				mainForm.viewport.Cursor = cursorPenFinish;
 				finish = true;
@@ -66,7 +62,7 @@ namespace LayoutCeiling.Tools
 				}
 				else
 				{
-					polygon.Add(newPoint);
+					cutout.Add(newPoint);
 				}
 			}
 			else if (e.Button == MouseButtons.Right)
@@ -83,32 +79,28 @@ namespace LayoutCeiling.Tools
 
 		public override void DeactivateTool()
 		{
-			polygon.Clear();
+			cutout.Clear();
 			base.DeactivateTool();
 		}
 
 		public override void ApplyChanges()
 		{
-			mainForm.layout.points.Clear();
-			mainForm.layout.points.AddRange(polygon);
+			mainForm.layout.cutout.Clear();
+			mainForm.layout.cutout.AddRange(cutout);
 		}
 
 		public override void DrawChangesPreview(Graphics g)
 		{
-			if (polygon.Count > 0)
+			if (cutout.Count > 0)
 			{
-				for (int i = 0; i < polygon.Count - 1; ++i)
+				for (int i = 0; i < cutout.Count - 1; ++i)
 				{
-					//g.DrawLine(Pens.Green, polygon[i].X, polygon[i].Y, polygon[i + 1].X, polygon[i + 1].Y);
-					mainForm.viewport.DrawLine(polygon[i], polygon[i+1], Viewport.DrawStyle.Preview);
+					mainForm.viewport.DrawLine(cutout[i], cutout[i+1], Viewport.DrawStyle.Preview);
 				}
-				//g.DrawLine(Pens.Green, polygon.Last().X, polygon.Last().Y, newPoint.X, newPoint.Y);
-				mainForm.viewport.DrawLine(polygon.Last(), newPoint, Viewport.DrawStyle.Preview);
-
-				//g.FillEllipse(Brushes.Gray, newPoint.X - mainForm.viewport.PointSize / 2, newPoint.Y - mainForm.viewport.PointSize / 2, mainForm.viewport.PointSize, mainForm.viewport.PointSize);
+				mainForm.viewport.DrawLine(cutout.Last(), newPoint, Viewport.DrawStyle.Preview);
 			}
 
-			foreach (var p in polygon)
+			foreach (var p in cutout)
 			{
 				//g.FillEllipse(Brushes.Green, p.X - mainForm.viewport.PointSize / 2, p.Y - mainForm.viewport.PointSize / 2, mainForm.viewport.PointSize, mainForm.viewport.PointSize);
 				mainForm.viewport.DrawPoint(p, Viewport.DrawStyle.Preview);
