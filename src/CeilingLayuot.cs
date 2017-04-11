@@ -9,6 +9,8 @@ namespace LayoutCeiling
 		public List<Point2> points;
 		public List<Point2> cutout;
 
+		//FIX: переделать все на shape'ы
+
 		public CeilingLayout()
 		{
 			Shapes = new List<Shape>();
@@ -125,6 +127,12 @@ namespace LayoutCeiling
 			}
 
 			return max - min;
+		}
+
+		public bool IsEmpty()
+		{
+			//FIX: ?? учитывать cutout
+			return Shapes.Count == 0;
 		}
 	}
 }

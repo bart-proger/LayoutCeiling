@@ -73,20 +73,22 @@ namespace LayoutCeiling.Actions
 
 		protected override void OnActionClick(object sender, EventArgs e)
 		{
-			float oldZoom = mainForm.viewport.Zoom;
+			if (!mainForm.layout.IsEmpty())
+			{
+				float oldZoom = mainForm.viewport.Zoom;
 
-			float ww = (mainForm.viewport.Width - 50) / mainForm.layout.Width();
-			float hh = (mainForm.viewport.Height - 50) / mainForm.layout.Height();
-			
-			if (ww < hh)
-				mainForm.viewport.Zoom = ww;
-			else
-				mainForm.viewport.Zoom = hh;
+				float ww = (mainForm.viewport.Width - 50) / mainForm.layout.Width();
+				float hh = (mainForm.viewport.Height - 50) / mainForm.layout.Height();
 
-			mainForm.viewport.Offset = (mainForm.viewport.Center - mainForm.layout.CenterBBox()) * mainForm.viewport.Zoom;
+				if (ww < hh)
+					mainForm.viewport.Zoom = ww;
+				else
+					mainForm.viewport.Zoom = hh;
+
+				mainForm.viewport.Offset = (mainForm.viewport.Center - mainForm.layout.CenterBBox()) * mainForm.viewport.Zoom;
+			}
 
 			base.OnActionClick(sender, e);
 		}
-		//TODO: zoom доступень только если есть макет
 	}
 }

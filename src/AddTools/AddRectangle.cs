@@ -8,7 +8,6 @@ namespace LayoutCeiling.AddTools
 {
 	class AddRectangle : AddShape
 	{
-		//TODO: undo/redo cmd
 		class Command : UndoCommand
 		{
 			MainForm mainForm;

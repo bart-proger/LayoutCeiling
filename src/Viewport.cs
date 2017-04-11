@@ -9,7 +9,7 @@ namespace LayoutCeiling
 {
 	public class Viewport : Panel
 	{
-		public enum DrawStyle { Normal, Selected, New, Error, Preview }
+		public enum DrawStyle { Normal, Selected, Error, Preview }
 
 		private MainForm mainForm;
 		//		Timer redrawTimer;
@@ -185,7 +185,6 @@ namespace LayoutCeiling
 				case DrawStyle.Selected:
 					g.FillRectangle(Brushes.DodgerBlue, point.X - psz * 1.3f / 2f, point.Y - psz * 1.3f / 2f, psz * 1.3f, psz * 1.3f);
 					break;
-				case DrawStyle.New:
 				case DrawStyle.Preview:
 					g.FillRectangle(Brushes.Gray, point.X - psz / 2, point.Y - psz / 2, psz, psz);
 					break;
@@ -321,10 +320,32 @@ namespace LayoutCeiling
 
 		private void DrawLayout2(CeilingLayout layout)
 		{
-			//base shape
+			//shape
 			int lettOffset = 0;
 			foreach (var shape in layout.Shapes)
 			{
+				HashSet<int> xLines = new HashSet<int>();
+				for (int i = 0; i < shape.Points.Count - 1; ++i)
+				{
+					int j;
+					for (j = i + 1; j < shape.Points.Count - 1; ++j)
+					{
+						bool xi = false;
+						if (Geometry.IntersectSegmentSegment(shape.Points[i], shape.Points[i + 1], shape.Points[j], shape.Points[j + 1]))
+						{
+							xi = true;
+							xLines.Add(j);
+						}
+						if (xi)
+							xLines.Add(i);
+					}
+					if (Geometry.IntersectSegmentSegment(shape.Points[i], shape.Points[i + 1], shape.Points[j], shape.Points[0]))
+					{
+						xLines.Add(i);
+						xLines.Add(j);
+					}
+				}
+
 				if (shape.Points.Count > 2)
 				{
 					Point[] tmp = new Point[shape.Points.Count];
@@ -340,9 +361,9 @@ namespace LayoutCeiling
 				{
 					for (int i = 0; i < shape.Points.Count - 1; ++i)
 					{
-						DrawLine(shape.Points[i], shape.Points[i + 1], /*TODO: xLines.Contains(i) ? DrawStyle.Error : */DrawStyle.Normal);
+						DrawLine(shape.Points[i], shape.Points[i + 1], xLines.Contains(i) ? DrawStyle.Error : DrawStyle.Normal);
 					}
-					DrawLine(shape.Points.Last(), shape.Points.First(), /*TODO: xLines.Contains(shape.Points.Count - 1) ? DrawStyle.Error : */DrawStyle.Normal);
+					DrawLine(shape.Points.Last(), shape.Points.First(), xLines.Contains(shape.Points.Count - 1) ? DrawStyle.Error : DrawStyle.Normal);
 				}
 
 				//points letters
@@ -363,12 +384,13 @@ namespace LayoutCeiling
 				}
 				lettOffset += shape.Points.Count;
 			}
-			//TODO: ......
+
+			//TODO: русовать внутренний вырез
 		}
 
 		private void DrawGrid()
 		{
-			//FIX: неправильно выводится сетка
+			//FIX: неправильно рисуется сетка
  			float gsz = (GridSize * Zoom);
 			float offx = Offset.X - (float)Math.Truncate(Offset.X / gsz) * gsz;
 			float offy = Offset.Y - (float)Math.Truncate(Offset.Y / gsz) * gsz;
@@ -428,6 +450,11 @@ namespace LayoutCeiling
 					return i;
 
 			return -1;
+		}
+
+		public bool CoordHoverPoint(Point2 coord, Point2 point)
+		{
+			return coord.DistanceTo(point) <= PointSize / Zoom;
 		}
 	}
 }

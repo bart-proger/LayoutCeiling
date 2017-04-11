@@ -4,6 +4,7 @@ namespace LayoutCeiling
 {
 	public class Selection
 	{
+		//TODO: выделение shap'ов
 		public HashSet<int> indices;
 		public Point2 Pivot { get; set; }
 

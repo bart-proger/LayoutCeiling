@@ -34,11 +34,11 @@ namespace LayoutCeiling
 			tools.Add(new Tools.SelectAndMove(this));
 			tools.Add(new Tools.SelectAndRotate(this));
 			tools.Add(new Tools.SelectAndScale(this));
-			tools.Add(new Tools.AddPolygon(this));
 			tools.Add(new Tools.AddPoint(this));
 			tools.Add(new Tools.HandTool(this));
 			tools.Add(new Tools.AddInnerCutout(this));
 
+			tools.Add(new AddTools.AddFreeShape(this));
 			tools.Add(new AddTools.AddRectangle(this));
 
 			foreach (var tool in tools)
@@ -71,21 +71,26 @@ namespace LayoutCeiling
 			}
 		}
 
-		const int WM_KEYUP = 0x101;
-
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
 		{
-			if (msg.Msg == WM_KEYUP)
-				foreach (var t in tools)
+			foreach (var t in tools)
+			{
+				if (keyData == t.HotKeys)
 				{
-					if (keyData == t.HotKeys)
-					{
-						t.ToolStripItem.PerformClick();
-						break;
-					}
+					t.ToolStripItem.PerformClick();
+					break;
 				}
+			}
 
 			return base.ProcessCmdKey(ref msg, keyData);
+		}
+
+		protected override bool ProcessDialogKey(Keys keyData)
+		{
+			if ((keyData & Keys.Alt) == Keys.Alt)
+				return true;
+			else
+				return base.ProcessDialogKey(keyData);
 		}
 
 		private void MainForm_KeyDown(object sender, KeyEventArgs e)

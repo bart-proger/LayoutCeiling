@@ -169,7 +169,7 @@ namespace LayoutCeiling.Tools
 					{
 						mainForm.viewport.DrawLine(p1, mainForm.layout.points[prev], Viewport.DrawStyle.Preview);
 					}
-					mainForm.viewport.DrawPoint(p1, Viewport.DrawStyle.New);
+					mainForm.viewport.DrawPoint(p1, Viewport.DrawStyle.Preview);
 				}
 			}
 			else
