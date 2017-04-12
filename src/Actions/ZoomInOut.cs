@@ -85,7 +85,7 @@ namespace LayoutCeiling.Actions
 				else
 					mainForm.viewport.Zoom = hh;
 
-				mainForm.viewport.Offset = (mainForm.viewport.Center - mainForm.layout.CenterBBox()) * mainForm.viewport.Zoom;
+				mainForm.viewport.Offset = (mainForm.viewport.Center - mainForm.layout.CenterOfBoundingRect()) * mainForm.viewport.Zoom;
 			}
 
 			base.OnActionClick(sender, e);

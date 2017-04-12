@@ -86,6 +86,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="src\Rect.cs" />
     <Compile Include="src\Selection.cs" />
     <Compile Include="src\AddTools\AddRectangle.cs" />
     <Compile Include="src\Shape.cs" />

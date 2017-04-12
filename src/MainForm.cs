@@ -22,8 +22,8 @@ namespace LayoutCeiling
 			viewport = new Viewport(this, panel);
 			Controls.Remove(panel);
 			Controls.Add(viewport);
-			this.ResumeLayout(false);
-			this.PerformLayout();
+			ResumeLayout(false);
+			PerformLayout();
 
 			layout = new CeilingLayout();
 			selection = new Selection();

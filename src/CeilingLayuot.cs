@@ -62,7 +62,7 @@ namespace LayoutCeiling
 			return center;
 		}
 
-		public Point2 CenterBBox()
+		public Point2 CenterOfBoundingRect()
 		{
 			Point2 center = new Point2(0, 0);
 			if (points.Count == 0)
@@ -91,20 +91,25 @@ namespace LayoutCeiling
 			return center;
 		}
 
+		//TODO: удалять shape при удалении его последней точки
+
 		public float Width()
 		{
-			if (points.Count == 0)
-				return 0f;
+			if (Shapes.Count == 0)
+				return 0;
 
 			float min, max;
-			min = max = points.First().X;
+			min = max = Shapes.First().Points.First().X;
 
-			foreach (var p in points)
+			foreach (var s in Shapes)
 			{
-				if (min > p.X)
-					min = p.X;
-				if (max < p.X)
-					max = p.X;
+				foreach (var p in s.Points)
+				{
+					if (min > p.X)
+						min = p.X;
+					if (max < p.X)
+						max = p.X;
+				}
 			}
 
 			return max - min;

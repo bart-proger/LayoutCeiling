@@ -21,5 +21,7 @@ namespace LayoutCeiling
 		{
 			Points = new List<Point2>(points);
 		}
+
+
 	}
 }
