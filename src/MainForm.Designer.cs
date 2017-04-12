@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.mainMenu = new System.Windows.Forms.MenuStrip();
 			this.mmEdit = new System.Windows.Forms.ToolStripMenuItem();
 			this.editTools = new System.Windows.Forms.ToolStrip();
@@ -89,12 +90,12 @@
 			this.newToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
 			this.newToolStripMenuItem.Text = "New";
 			// 
-			// shapeTools
+			// addTools
 			// 
 			this.addTools.ImageScalingSize = new System.Drawing.Size(32, 32);
 			this.addTools.Location = new System.Drawing.Point(0, 63);
 			this.addTools.MinimumSize = new System.Drawing.Size(0, 39);
-			this.addTools.Name = "shapeTools";
+			this.addTools.Name = "addTools";
 			this.addTools.Size = new System.Drawing.Size(872, 39);
 			this.addTools.TabIndex = 5;
 			this.addTools.Text = "Фигуры";
@@ -110,6 +111,7 @@
 			this.Controls.Add(this.editTools);
 			this.Controls.Add(this.mainMenu);
 			this.DoubleBuffered = true;
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.KeyPreview = true;
 			this.MainMenuStrip = this.mainMenu;
 			this.Name = "MainForm";
