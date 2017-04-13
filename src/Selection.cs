@@ -5,37 +5,54 @@ namespace LayoutCeiling
 	public class Selection
 	{
 		//TODO: выделение shap'ов
-		public HashSet<int> indices;
+		public int ShapeIndex { get; private set; }
+		public HashSet<int> PointsIndices { get; }
 		public Point2 Pivot { get; set; }
 
 		public Selection()
 		{
-			this.indices = new HashSet<int>();
+			ShapeIndex = -1;
+			PointsIndices = new HashSet<int>();
+		}
+
+		public void SelectShape(int index)
+		{
+			ShapeIndex = index;
+		}
+
+		public void UnselectShape()
+		{
+			ShapeIndex = -1;
 		}
 
 		public void SelectPoints(HashSet<int> indices)
 		{
-			this.indices.UnionWith(indices);
+			PointsIndices.UnionWith(indices);
 		}
 
 		public void UnselectPoints(HashSet<int> indices)
 		{
-			this.indices.ExceptWith(indices);
+			PointsIndices.ExceptWith(indices);
 		}
 
-		public void UnselectAll()
+		public void UnselectAllPoints()
 		{
-			this.indices.Clear();
+			PointsIndices.Clear();
 		}
 
 		public bool Contains(int index)
 		{
-			return this.indices.Contains(index);
+			return this.PointsIndices.Contains(index);
 		}
 
-		public bool IsEmpty()
+		public bool ContainsPoints()
 		{
-			return this.indices.Count == 0;
+			return PointsIndices.Count == 0;
+		}
+
+		public bool ContainsShape()
+		{
+			return ShapeIndex > -1;
 		}
 	}
 }

@@ -12,12 +12,14 @@ namespace LayoutCeiling.AddTools
 		{
 			MainForm mainForm;
 			Point2 from, to;
+			int prevShapeIndex;
 
 			public Command(MainForm mainForm, Point2 from, Point2 to) : base("+ Прямоугольник")
 			{
 				this.mainForm = mainForm;
 				this.from = from;
 				this.to = to;
+				prevShapeIndex = mainForm.selection.ShapeIndex;
 
 				Text += ":" + Math.Abs(to.X - from.X).ToString("0.#") + "x" + Math.Abs(to.Y - from.Y).ToString("0.#");
 			}
@@ -31,12 +33,13 @@ namespace LayoutCeiling.AddTools
 				points.Add(new Point2(from.X, to.Y));
 
 				mainForm.layout.Shapes.Add(new Shape(points));
-				//TODO: выделить новый shape - mainForm.selection. ...
+				mainForm.selection.SelectShape(mainForm.layout.Shapes.Count - 1);
 			}
 
 			public override void Undo()
 			{
 				mainForm.layout.Shapes.RemoveAt(mainForm.layout.Shapes.Count - 1);
+				mainForm.selection.SelectShape(prevShapeIndex);
 			}
 		}
 

@@ -77,15 +77,17 @@ namespace LayoutCeiling.Actions
 			{
 				float oldZoom = mainForm.viewport.Zoom;
 
-				float ww = (mainForm.viewport.Width - 50) / mainForm.layout.Width();
-				float hh = (mainForm.viewport.Height - 50) / mainForm.layout.Height();
+				Rect lbr = mainForm.layout.BoundingRect();
+
+				float ww = (mainForm.viewport.Width - 50) / lbr.Width;
+				float hh = (mainForm.viewport.Height - 50) / lbr.Height;
 
 				if (ww < hh)
 					mainForm.viewport.Zoom = ww;
 				else
 					mainForm.viewport.Zoom = hh;
 
-				mainForm.viewport.Offset = (mainForm.viewport.Center - mainForm.layout.CenterOfBoundingRect()) * mainForm.viewport.Zoom;
+				mainForm.viewport.Offset = (mainForm.viewport.Center - lbr.Center) * mainForm.viewport.Zoom;
 			}
 
 			base.OnActionClick(sender, e);

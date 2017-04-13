@@ -24,12 +24,12 @@ namespace LayoutCeiling.Tools
 
 			public override void Do()
 			{
-				mainForm.layout.points.Insert(index, p);
+				mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points.Insert(index, p);
 			}
 
 			public override void Undo()
 			{
-				mainForm.layout.points.RemoveAt(index);
+				mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points.RemoveAt(index);
 			}
 		}
 
@@ -72,10 +72,10 @@ namespace LayoutCeiling.Tools
 			Point2 cursorPos = newPoint = p;
 
 			overLine = false;
-			int i = mainForm.layout.points.Count-1;
-			for (int j = 0; j < mainForm.layout.points.Count; ++j)
+			int i = mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points.Count-1;
+			for (int j = 0; j < mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points.Count; ++j)
 			{
-				if (Geometry.ProjectionPointToSegment(cursorPos, mainForm.layout.points[i], mainForm.layout.points[j], ref newPoint)
+				if (Geometry.ProjectionPointToSegment(cursorPos, mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points[i], mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points[j], ref newPoint)
 					&& Geometry.PointInCircle(newPoint, cursorPos, mainForm.viewport.PointSize/* / 2f*/))
 				{
 					insertIndex = i+1;

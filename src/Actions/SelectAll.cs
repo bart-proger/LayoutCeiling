@@ -19,8 +19,10 @@ namespace LayoutCeiling.Actions
 
 		protected override void OnActionClick(object sender, EventArgs e)
 		{
+			if (!mainForm.selection.ContainsShape())
+				return;
 			HashSet<int> indices = new HashSet<int>();
-			for (int i = 0; i < mainForm.layout.points.Count; ++i)
+			for (int i = 0; i < mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points.Count; ++i)
 			{
 				indices.Add(i);
 			}

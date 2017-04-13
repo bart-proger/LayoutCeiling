@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LayoutCeiling.Tools
@@ -27,7 +24,7 @@ namespace LayoutCeiling.Tools
 
 				if (mode == SelectMode.New)
 				{
-					prevSelectionPointsIndices = new HashSet<int>(mainForm.selection.indices);
+					prevSelectionPointsIndices = new HashSet<int>(mainForm.selection.PointsIndices);
 				}
 
 				if (pointsIndices.Count == 0)
@@ -49,7 +46,7 @@ namespace LayoutCeiling.Tools
 				switch (mode)
 				{
 					case SelectMode.New:
-						mainForm.selection.UnselectAll();
+						mainForm.selection.UnselectAllPoints();
 						mainForm.selection.SelectPoints(pointsIndices);
 						break;
 					case SelectMode.Add:
@@ -66,7 +63,7 @@ namespace LayoutCeiling.Tools
 				switch (mode)
 				{
 					case SelectMode.New:
-						mainForm.selection.UnselectAll();
+						mainForm.selection.UnselectAllPoints();
 						mainForm.selection.SelectPoints(prevSelectionPointsIndices);
 						break;
 					case SelectMode.Add:
@@ -117,21 +114,21 @@ namespace LayoutCeiling.Tools
 		protected Point2 CalcSelectionCenter()
 		{
 			Point2 center = new Point2(0, 0);
-			if (mainForm.selection.indices.Count == 0)
+			if (mainForm.selection.PointsIndices.Count == 0)
 				return center;
-			if (mainForm.selection.indices.Count == 1)
+			if (mainForm.selection.PointsIndices.Count == 1)
 			{
-				center = mainForm.layout.points[mainForm.selection.indices.First()];
+				center = mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points[mainForm.selection.PointsIndices.First()];
 				return center;
 			}
 
-			foreach (var i in mainForm.selection.indices)
+			foreach (var i in mainForm.selection.PointsIndices)
 			{
-				center.X += mainForm.layout.points[i].X;
-				center.Y += mainForm.layout.points[i].Y;
+				center.X += mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points[i].X;
+				center.Y += mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points[i].Y;
 			}
-			center.X /= mainForm.selection.indices.Count;
-			center.Y /= mainForm.selection.indices.Count;
+			center.X /= mainForm.selection.PointsIndices.Count;
+			center.Y /= mainForm.selection.PointsIndices.Count;
 
 			return center;
 		}
@@ -139,24 +136,33 @@ namespace LayoutCeiling.Tools
 		protected void FindPointsInSelectArea()
 		{
 			pointsInSelectArea.Clear();
+			if (!mainForm.selection.ContainsShape())
+				return;
+
+			int shapeIndex = mainForm.selection.ShapeIndex;
 
 			if (from == to)
 			{
-				int index = mainForm.viewport.PointIndexAtCoord(from);
-				if (index > -1)
+				int index = 0;
+				foreach (var p in mainForm.layout.Shapes[shapeIndex].Points)
 				{
-					bool add = true;
-					switch (selectMode)
+					if (mainForm.viewport.CoordHoverPoint(from, p))
 					{
-						case SelectMode.Add:
-							add = !mainForm.selection.Contains(index);
-							break;
-						case SelectMode.Remove:
-							add = mainForm.selection.Contains(index);
-							break;
+						bool add = true;
+						switch (selectMode)
+						{
+							case SelectMode.Add:
+								add = !mainForm.selection.Contains(index);
+								break;
+							case SelectMode.Remove:
+								add = mainForm.selection.Contains(index);
+								break;
+						}
+						if (add)
+							pointsInSelectArea.Add(index);
+						break;
 					}
-					if (add)
-						pointsInSelectArea.Add(index);
+					++index;
 				}
 				return;
 			}
@@ -182,9 +188,9 @@ namespace LayoutCeiling.Tools
 				bottom = from.Y;
 			}
 
-			for (int i = 0; i < mainForm.layout.points.Count; ++i)
+			for (int i = 0; i < mainForm.layout.Shapes[shapeIndex].Points.Count; ++i)
 			{
-				Point2 p = mainForm.layout.points[i];
+				Point2 p = mainForm.layout.Shapes[shapeIndex].Points[i];
 				if (p.X >= left-3 && p.X <= right+3 && p.Y >= top-3 && p.Y <= bottom+3)
 				{
 					bool add = true;
@@ -217,8 +223,8 @@ namespace LayoutCeiling.Tools
 				switch (selectMode)
 				{
 					case SelectMode.New:
-						doCmd = ((pointsInSelectArea.Count > 0 || mainForm.selection.indices.Count > 0) && 
-							!mainForm.selection.indices.SetEquals(pointsInSelectArea));
+						doCmd = ((pointsInSelectArea.Count > 0 || mainForm.selection.PointsIndices.Count > 0) && 
+							!mainForm.selection.PointsIndices.SetEquals(pointsInSelectArea));
 						break;
 					case SelectMode.Add:
 // 						pointsInSelectArea.ExceptWith(mainForm.selection.pointsIndices);
@@ -301,7 +307,7 @@ namespace LayoutCeiling.Tools
 					drawStyle = Viewport.DrawStyle.Normal;
 				foreach (int i in pointsInSelectArea)
 				{
-					mainForm.viewport.DrawPoint(mainForm.layout.points[i], drawStyle);
+					mainForm.viewport.DrawPoint(mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points[i], drawStyle);
 				}
 
 				Point2 pos = new Point2(left, top);

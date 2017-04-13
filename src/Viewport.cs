@@ -122,7 +122,7 @@ namespace LayoutCeiling
 // 			g.ScaleTransform(Zoom, Zoom);
 
 			DrawGrid();
-			DrawLayout(mainForm.layout);
+//			DrawLayout(mainForm.layout);
 			DrawLayout2(mainForm.layout);
 
 			if (mainForm.activeTool != null)
@@ -130,7 +130,7 @@ namespace LayoutCeiling
 
 			g.ResetTransform();
 			// info
-			g.DrawString("select: " + mainForm.selection.indices.Count.ToString(), Font, Brushes.Gray, 2, 2);
+			g.DrawString("select: " + mainForm.selection.PointsIndices.Count.ToString(), Font, Brushes.Gray, 2, 2);
 			g.DrawString("P = " + mainForm.layout.Perimeter().ToString("0.#") + " см", Font, Brushes.Gray, 2, 22);
 			//g.DrawString(p.ToString(), Font, Brushes.Gray, 2, 42);
 			g.DrawString("zoom: " + (Zoom * 100).ToString("0.#") + "%", Font, Brushes.Gray, 2, 62);
@@ -226,97 +226,97 @@ namespace LayoutCeiling
 			}
 		}
 
-		private void DrawLayout(CeilingLayout layout)
-		{
-			HashSet<int> xLines = new HashSet<int>();
-			for (int i = 0; i < layout.points.Count - 1; ++i)
-			{
-				int j;
-				for (j = i + 1; j < layout.points.Count - 1; ++j)
-				{
-					bool xi = false;
-					if (Geometry.IntersectSegmentSegment(layout.points[i], layout.points[i + 1], layout.points[j], layout.points[j + 1]))
-					{
-						xi = true;
-						xLines.Add(j);
-					}
-					if (xi)
-						xLines.Add(i);
-				}
-				if (Geometry.IntersectSegmentSegment(layout.points[i], layout.points[i + 1], layout.points[j], layout.points[0]))
-				{
-					xLines.Add(i);
-					xLines.Add(j);
-				}
-			}
-
-			//inner cutout [
-			if (layout.cutout.Count > 2)
-			{
-				Point[] pointsArray = new Point[layout.cutout.Count];
-				for (int i = 0; i < layout.cutout.Count; ++i)
-				{
-					pointsArray[i] = ToViewportSpace(layout.cutout[i]).ToPoint();
-				}
-				GraphicsPath ph = new GraphicsPath();
-				ph.AddPolygon(pointsArray);
-				g.SetClip(new Region(ph), CombineMode.Exclude);
-			}
-
-			//base shape
-			if (layout.points.Count > 2)
-			{
-				Point[] pointsArray = new Point[layout.points.Count];
-				for (int i = 0; i < layout.points.Count; ++i)
-				{
-					pointsArray[i] = ToViewportSpace(layout.points[i]).ToPoint();
-				}
-				g.FillPolygon(Brushes.White, pointsArray);
-			}
-
-			//edges
-			if (layout.points.Count > 1)
-			{
-				for (int i = 0; i < layout.points.Count - 1; ++i)
-				{
-					//g.DrawLine(Pens.Black, layout.points[i], layout.points[i + 1]);
-					DrawLine(layout.points[i], layout.points[i + 1], xLines.Contains(i) ? DrawStyle.Error : DrawStyle.Normal);
-				}
-				//g.DrawLine(Pens.Black, layout.points.Last().X, layout.points.Last().Y, layout.points.First().X, layout.points.First().Y);
-				DrawLine(layout.points.Last(), layout.points.First(), xLines.Contains(layout.points.Count-1) ? DrawStyle.Error : DrawStyle.Normal);
-			}
-
-			// ] end cutting out
-			if (layout.cutout.Count > 2)
-				g.ResetClip();
-
-			//cutout contour
-			if (layout.cutout.Count > 1)
-			{
-				for (int i = 0; i < layout.cutout.Count - 1; ++i)
-				{
-					DrawLine(layout.cutout[i], layout.cutout[i + 1], /*xLines.Contains(i) ? DrawStyle.Error : */DrawStyle.Normal);
-				}
-				DrawLine(layout.cutout.Last(), layout.cutout.First(), /*xLines.Contains(layout.points.Count - 1) ? DrawStyle.Error : */DrawStyle.Normal);
-			}
-
-			//points letters
-			for (int i = 0; i < layout.points.Count; ++i)
-			{
-				Point2 p = layout.points[i];
-				if (mainForm.selection.Contains(i))
-				{
-					DrawPoint(p, DrawStyle.Selected);
-				}
-				else
-				{
-					DrawPoint(p, DrawStyle.Normal);
-				}
-
-				p = ToViewportSpace(p);
-				g.DrawString(CeilingLayout.PointLetter(i), fontLetter, Brushes.Black, p.X + 2, p.Y + 2);
-			}
-		}
+// 		private void DrawLayout(CeilingLayout layout)
+// 		{
+// 			HashSet<int> xLines = new HashSet<int>();
+// 			for (int i = 0; i < layout.points.Count - 1; ++i)
+// 			{
+// 				int j;
+// 				for (j = i + 1; j < layout.points.Count - 1; ++j)
+// 				{
+// 					bool xi = false;
+// 					if (Geometry.IntersectSegmentSegment(layout.points[i], layout.points[i + 1], layout.points[j], layout.points[j + 1]))
+// 					{
+// 						xi = true;
+// 						xLines.Add(j);
+// 					}
+// 					if (xi)
+// 						xLines.Add(i);
+// 				}
+// 				if (Geometry.IntersectSegmentSegment(layout.points[i], layout.points[i + 1], layout.points[j], layout.points[0]))
+// 				{
+// 					xLines.Add(i);
+// 					xLines.Add(j);
+// 				}
+// 			}
+// 
+// 			//inner cutout [
+// 			if (layout.cutout.Count > 2)
+// 			{
+// 				Point[] pointsArray = new Point[layout.cutout.Count];
+// 				for (int i = 0; i < layout.cutout.Count; ++i)
+// 				{
+// 					pointsArray[i] = ToViewportSpace(layout.cutout[i]).ToPoint();
+// 				}
+// 				GraphicsPath ph = new GraphicsPath();
+// 				ph.AddPolygon(pointsArray);
+// 				g.SetClip(new Region(ph), CombineMode.Exclude);
+// 			}
+// 
+// 			//base shape
+// 			if (layout.points.Count > 2)
+// 			{
+// 				Point[] pointsArray = new Point[layout.points.Count];
+// 				for (int i = 0; i < layout.points.Count; ++i)
+// 				{
+// 					pointsArray[i] = ToViewportSpace(layout.points[i]).ToPoint();
+// 				}
+// 				g.FillPolygon(Brushes.White, pointsArray);
+// 			}
+// 
+// 			//edges
+// 			if (layout.points.Count > 1)
+// 			{
+// 				for (int i = 0; i < layout.points.Count - 1; ++i)
+// 				{
+// 					//g.DrawLine(Pens.Black, layout.points[i], layout.points[i + 1]);
+// 					DrawLine(layout.points[i], layout.points[i + 1], xLines.Contains(i) ? DrawStyle.Error : DrawStyle.Normal);
+// 				}
+// 				//g.DrawLine(Pens.Black, layout.points.Last().X, layout.points.Last().Y, layout.points.First().X, layout.points.First().Y);
+// 				DrawLine(layout.points.Last(), layout.points.First(), xLines.Contains(layout.points.Count-1) ? DrawStyle.Error : DrawStyle.Normal);
+// 			}
+// 
+// 			// ] end cutting out
+// 			if (layout.cutout.Count > 2)
+// 				g.ResetClip();
+// 
+// 			//cutout contour
+// 			if (layout.cutout.Count > 1)
+// 			{
+// 				for (int i = 0; i < layout.cutout.Count - 1; ++i)
+// 				{
+// 					DrawLine(layout.cutout[i], layout.cutout[i + 1], /*xLines.Contains(i) ? DrawStyle.Error : */DrawStyle.Normal);
+// 				}
+// 				DrawLine(layout.cutout.Last(), layout.cutout.First(), /*xLines.Contains(layout.points.Count - 1) ? DrawStyle.Error : */DrawStyle.Normal);
+// 			}
+// 
+// 			//points letters
+// 			for (int i = 0; i < layout.points.Count; ++i)
+// 			{
+// 				Point2 p = layout.points[i];
+// 				if (mainForm.selection.Contains(i))
+// 				{
+// 					DrawPoint(p, DrawStyle.Selected);
+// 				}
+// 				else
+// 				{
+// 					DrawPoint(p, DrawStyle.Normal);
+// 				}
+// 
+// 				p = ToViewportSpace(p);
+// 				g.DrawString(CeilingLayout.PointLetter(i), fontLetter, Brushes.Black, p.X + 2, p.Y + 2);
+// 			}
+// 		}
 
 		private void DrawLayout2(CeilingLayout layout)
 		{
@@ -418,7 +418,7 @@ namespace LayoutCeiling
 			int x = (int)ToViewportSpace(mainForm.selection.Pivot).X;
 			int y = (int)ToViewportSpace(mainForm.selection.Pivot).Y;
 
-			if (mainForm.selection.indices.Count > 0)
+			if (mainForm.selection.PointsIndices.Count > 0)
 			{
 				g.DrawEllipse(Pens.Blue, x - 3, y - 3, 6, 6);
 				g.DrawLine(Pens.Blue, x - 6, y, x + 6, y);
@@ -443,10 +443,10 @@ namespace LayoutCeiling
 			return (Point2.FromPoint(p) - (Offset + Center)) / Zoom + Center;
 		}
 
-		public int PointIndexAtCoord(Point2 coord)
+		public int PointIndexAtCoord(int shapeIndex, Point2 coord)
 		{
-			for (int i = 0; i < mainForm.layout.points.Count; ++i)
-				if (coord.DistanceTo(mainForm.layout.points[i]) <= mainForm.viewport.PointSize / mainForm.viewport.Zoom)
+			for (int i = 0; i < mainForm.layout.Shapes[shapeIndex].Points.Count; ++i)
+				if (coord.DistanceTo(mainForm.layout.Shapes[shapeIndex].Points[i]) <= PointSize / Zoom)
 					return i;
 
 			return -1;

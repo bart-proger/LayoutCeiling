@@ -26,7 +26,7 @@ namespace LayoutCeiling.Actions
 
 				foreach (var i in indices)
 				{
-					points.Add(mainForm.layout.points[i]);
+					points.Add(mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points[i]);
 				}
 			}
 
@@ -34,9 +34,9 @@ namespace LayoutCeiling.Actions
 			{
 				foreach (var index in indices)
 				{
-					mainForm.layout.points.RemoveAt(index);
+					mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points.RemoveAt(index);
 				}
-				mainForm.selection.UnselectAll();
+				mainForm.selection.UnselectAllPoints();
 			}
 
 			public override void Undo()
@@ -45,7 +45,7 @@ namespace LayoutCeiling.Actions
 				int n = points.Count;
 				foreach (var index in sortedByInc)
 				{
-					mainForm.layout.points.Insert(index, points[--n]);
+					mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points.Insert(index, points[--n]);
 				}
 				mainForm.selection.SelectPoints(indices);
 			}
@@ -61,11 +61,11 @@ namespace LayoutCeiling.Actions
 
 		protected override void OnActionClick(object sender, EventArgs e)
 		{
-			if (mainForm.selection.IsEmpty())
+			if (mainForm.selection.ContainsPoints())
 			{
 				return;
 			}
-			mainForm.undoStack.Push(new DeletePointCmd(mainForm, mainForm.selection.indices));
+			mainForm.undoStack.Push(new DeletePointCmd(mainForm, mainForm.selection.PointsIndices));
 
 			base.OnActionClick(sender, e);
 		}

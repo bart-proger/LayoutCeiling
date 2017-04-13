@@ -28,10 +28,10 @@ namespace LayoutCeiling.Tools
 				prevPoints = new List<Point2>();
 
 				Text += " ";
-				foreach (int i in mainForm.selection.indices)
+				foreach (int i in mainForm.selection.PointsIndices)
 				{
 					Text += CeilingLayout.PointLetter(i);
-					prevPoints.Add(mainForm.layout.points[i]);
+					prevPoints.Add(mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points[i]);
 				}
 
 
@@ -39,9 +39,9 @@ namespace LayoutCeiling.Tools
 
 			public override void Do()
 			{
- 				foreach (var i in mainForm.selection.indices)
+ 				foreach (var i in mainForm.selection.PointsIndices)
 				{
-					mainForm.layout.points[i] = SelectAndScale.ScalePoint(mainForm.layout.points[i], center, dScaleX, dScaleY);
+					mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points[i] = SelectAndScale.ScalePoint(mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points[i], center, dScaleX, dScaleY);
  				}				
 			}
 
@@ -53,10 +53,10 @@ namespace LayoutCeiling.Tools
 // 				}
 				
 				int j = -1;
-				foreach (var i in mainForm.selection.indices)
+				foreach (var i in mainForm.selection.PointsIndices)
 				{
 					++j;
-					mainForm.layout.points[i] = prevPoints[j];
+					mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points[i] = prevPoints[j];
 				}
 			}
 		}
@@ -148,7 +148,7 @@ namespace LayoutCeiling.Tools
 			{
 				if (selectMode == SelectMode.New && pointsInSelectArea.Count > 0)
 				{
-					if (!mainForm.selection.indices.Contains(pointsInSelectArea.First()))
+					if (!mainForm.selection.PointsIndices.Contains(pointsInSelectArea.First()))
 					{
 						ApplyChanges();
 					}
@@ -207,14 +207,14 @@ namespace LayoutCeiling.Tools
 				double dScaleX = Math.Sign(from.X - mainForm.selection.Pivot.X) * dx * ScaleSize;
 				double dScaleY = Math.Sign(from.Y - mainForm.selection.Pivot.Y) * dy * ScaleSize;
 
-				for (int i = 0; i < mainForm.selection.indices.Count; ++i)
+				for (int i = 0; i < mainForm.selection.PointsIndices.Count; ++i)
 				{
-					int moved = mainForm.selection.indices.ElementAt(i);
-					int next = (moved + 1) % mainForm.layout.points.Count;
-					int prev = (moved - 1 + mainForm.layout.points.Count) % mainForm.layout.points.Count;
+					int moved = mainForm.selection.PointsIndices.ElementAt(i);
+					int next = (moved + 1) % mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points.Count;
+					int prev = (moved - 1 + mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points.Count) % mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points.Count;
 
-					Point2 p1 = ScalePoint(mainForm.layout.points[moved], mainForm.selection.Pivot, dScaleX, dScaleY);
-					Point2 p2 = mainForm.layout.points[next];
+					Point2 p1 = ScalePoint(mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points[moved], mainForm.selection.Pivot, dScaleX, dScaleY);
+					Point2 p2 = mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points[next];
 					if (mainForm.selection.Contains(next))
 					{
 						p2 = ScalePoint(p2, mainForm.selection.Pivot, dScaleX, dScaleY);
@@ -223,7 +223,7 @@ namespace LayoutCeiling.Tools
 					mainForm.viewport.DrawLine(p1, p2, Viewport.DrawStyle.Preview);
 					if (!mainForm.selection.Contains(prev))
 					{
-						mainForm.viewport.DrawLine(p1, mainForm.layout.points[prev], Viewport.DrawStyle.Preview);
+						mainForm.viewport.DrawLine(p1, mainForm.layout.Shapes[mainForm.selection.ShapeIndex].Points[prev], Viewport.DrawStyle.Preview);
 					}
 					mainForm.viewport.DrawPoint(p1, Viewport.DrawStyle.Preview);
 				}

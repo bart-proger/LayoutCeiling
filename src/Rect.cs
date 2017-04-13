@@ -17,6 +17,7 @@ namespace LayoutCeiling
 		public float Y { get { return pos_.Y; } set { pos_.Y = value; } }
 		public float Width { get { return size_.X; } set { size_.X = value; } }
 		public float Height { get { return size_.Y; } set { size_.Y = value; } }
+		public Point2 Center { get { return pos_ + (size_ / 2f); } }
 
 		public Rect(float x, float y, float width, float height)
 		{

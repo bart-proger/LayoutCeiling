@@ -14,22 +14,26 @@ namespace LayoutCeiling.AddTools
 		{
 			MainForm mainForm;
 			List<Point2> points;
+			int prevShapeIndex;
 
 			public Command(MainForm mainForm, List<Point2> points) : base("+ Произвольный контур")
 			{
 				this.mainForm = mainForm;
 				this.points = new List<Point2>(points);
+
+				prevShapeIndex = mainForm.selection.ShapeIndex;
 			}
 
 			public override void Do()
 			{
 				mainForm.layout.Shapes.Add(new Shape(points));
-				//TODO: выделить новый shape - mainForm.selection. ...
+				mainForm.selection.SelectShape(mainForm.layout.Shapes.Count - 1);
 			}
 
 			public override void Undo()
 			{
 				mainForm.layout.Shapes.RemoveAt(mainForm.layout.Shapes.Count - 1);
+				mainForm.selection.SelectShape(prevShapeIndex);
 			}
 		}
 

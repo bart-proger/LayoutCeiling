@@ -57,7 +57,7 @@ namespace LayoutCeiling.Tools
 				if (finish)
 				{
 					ApplyChanges();
-					mainForm.selection.UnselectAll();
+					mainForm.selection.UnselectAllPoints();
 					DeactivateTool();
 				}
 				else
