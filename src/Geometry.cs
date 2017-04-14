@@ -1,5 +1,9 @@
 ﻿
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace LayoutCeiling
 {
 	public static class Geometry
@@ -50,6 +54,45 @@ namespace LayoutCeiling
 		public static bool PointInCircle(Point2 p, Point2 center, float radius)
 		{
 			return p.DistanceTo(center) < radius;
+		}
+
+		private static int IntersectRayXSegment(Point2 rayBegin, Point2 a, Point2 b)
+		{
+			Point2 aa = a - rayBegin;
+			Point2 bb = b - rayBegin;
+
+			if (aa.Y * bb.Y > 0)
+				return 1;
+			int s = Math.Sign(aa.X * bb.Y - aa.Y * bb.X);
+			if (s == 0)
+			{
+				if (aa.X * bb.X <= 0)
+					return 0;
+				return 1;
+			}
+			if (aa.Y < 0)
+				return -s;
+			if (bb.Y < 0)
+				return s;
+			return 1;
+		}
+
+		public static bool PointInPolygon(Point2 p, List<Point2> polygon)
+		{
+			int count = polygon.Count();
+			int result = 1; // точка снаружи
+
+			for (int i = 0, j = 1; i < count; ++i, ++j)
+			{
+				j = j == count ? 0 : j;
+
+				int check = IntersectRayXSegment(p, polygon[i], polygon[j]);
+				if (check == 0)	
+					return true;    //точка на ребре
+
+				result *= check;
+			}
+			return result < 0;	//точка внутри 
 		}
 	}
 }

@@ -72,7 +72,7 @@ namespace LayoutCeiling.AddTools
 		{
 			newPoint = p;
 
-			if (points.Count > 2 && mainForm.viewport.CoordHoverPoint(p, points.First()))
+			if (points.Count > 2 && mainForm.viewport.PointNearPoint(p, points.First()))
 			{
 				mainForm.viewport.Cursor = cursorPenFinish;
 				finish = true;

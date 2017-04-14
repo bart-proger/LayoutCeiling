@@ -36,7 +36,7 @@ namespace LayoutCeiling
 			tools.Add(new Tools.SelectAndScale(this));
 			tools.Add(new Tools.AddPoint(this));
 			tools.Add(new Tools.HandTool(this));
-			tools.Add(new Tools.AddInnerCutout(this));
+//			tools.Add(new Tools.AddInnerCutout(this));
 
 			tools.Add(new AddTools.AddFreeShape(this));
 			tools.Add(new AddTools.AddRectangle(this));

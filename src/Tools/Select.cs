@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -29,7 +30,7 @@ namespace LayoutCeiling.Tools
 
 				if (pointsIndices.Count == 0)
 				{
-					Text = "Сброс выделения";
+					Text = "Сброс выделения точек";
 				}
 				else
 				{
@@ -73,6 +74,33 @@ namespace LayoutCeiling.Tools
 						mainForm.selection.SelectPoints(pointsIndices);
 						break;
 				}
+			}
+		}
+
+		public class SelectShapeCmd: UndoCommand
+		{
+			private MainForm mainForm;
+			private int prevShapeIndex, shapeIndex;
+
+			public SelectShapeCmd(MainForm mainForm, int shapeIndex): base("Выделение контура")
+			{
+				this.mainForm = mainForm;
+				this.shapeIndex = shapeIndex;
+				prevShapeIndex = mainForm.selection.ShapeIndex;
+				Text += ": " + shapeIndex.ToString();
+
+				if (shapeIndex == -1)
+					Text = "Сброс выделения контура";
+			}
+
+			public override void Do()
+			{
+				mainForm.selection.SelectShape(shapeIndex);
+			}
+
+			public override void Undo()
+			{
+				mainForm.selection.SelectShape(prevShapeIndex);
 			}
 		}
 
@@ -136,36 +164,6 @@ namespace LayoutCeiling.Tools
 		protected void FindPointsInSelectArea()
 		{
 			pointsInSelectArea.Clear();
-			if (!mainForm.selection.ContainsShape())
-				return;
-
-			int shapeIndex = mainForm.selection.ShapeIndex;
-
-			if (from == to)
-			{
-				int index = 0;
-				foreach (var p in mainForm.layout.Shapes[shapeIndex].Points)
-				{
-					if (mainForm.viewport.CoordHoverPoint(from, p))
-					{
-						bool add = true;
-						switch (selectMode)
-						{
-							case SelectMode.Add:
-								add = !mainForm.selection.Contains(index);
-								break;
-							case SelectMode.Remove:
-								add = mainForm.selection.Contains(index);
-								break;
-						}
-						if (add)
-							pointsInSelectArea.Add(index);
-						break;
-					}
-					++index;
-				}
-				return;
-			}
 
 			if (from.X < to.X)
 			{
@@ -186,6 +184,37 @@ namespace LayoutCeiling.Tools
 			{
 				top = to.Y;
 				bottom = from.Y;
+			}
+
+			if (!mainForm.selection.ContainsShape())
+				return;
+
+			int shapeIndex = mainForm.selection.ShapeIndex;
+
+			if (from == to)
+			{
+				int index = 0;
+				foreach (var p in mainForm.layout.Shapes[shapeIndex].Points)
+				{
+					if (mainForm.viewport.PointNearPoint(from, p))
+					{
+						bool add = true;
+						switch (selectMode)
+						{
+							case SelectMode.Add:
+								add = !mainForm.selection.Contains(index);
+								break;
+							case SelectMode.Remove:
+								add = mainForm.selection.Contains(index);
+								break;
+						}
+						if (add)
+							pointsInSelectArea.Add(index);
+						break;
+					}
+					++index;
+				}
+				return;
 			}
 
 			for (int i = 0; i < mainForm.layout.Shapes[shapeIndex].Points.Count; ++i)
@@ -273,6 +302,14 @@ namespace LayoutCeiling.Tools
 				from = to = p;
 				FindPointsInSelectArea();
 			}
+			else if (e.Button == MouseButtons.Right)
+			{
+				List<UndoCommand> cmds = new List<UndoCommand>(2);
+				cmds.Add(new SelectCmd(mainForm, SelectMode.New, new HashSet<int>()));
+				cmds.Add(new SelectShapeCmd(mainForm, mainForm.layout.ShapeIndexAtCoord(p)));
+
+				mainForm.undoStack.Push(new UndoCommandList(cmds.Last().Text, cmds));
+			}
 		}
 
 		public override void OnMouseMove(MouseEventArgs e, Point2 p)
@@ -294,7 +331,7 @@ namespace LayoutCeiling.Tools
 
 				selecting = false;/*toolMode = ToolMode.Browse;*/
 				selectMode = SelectMode.New;
-				left = right = top = bottom = -1;
+				left = right = top = bottom = 0;
 			}
 		}
 

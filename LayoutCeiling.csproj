@@ -94,7 +94,6 @@
     <Compile Include="src\ToolStripRadioButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="src\Tools\AddInnerCutout.cs" />
     <Compile Include="src\AddTools\AddFreeShape.cs" />
     <Compile Include="src\Tools\HandTool.cs" />
     <Compile Include="src\Tools\Select.cs" />

@@ -6,8 +6,6 @@ namespace LayoutCeiling
 	public class CeilingLayout
 	{
 		public List<Shape> Shapes { get; set; }
-//		public List<Point2> points;
-		public List<Point2> cutout;
 
 		//TODO: удалять shape при удалении его последней точки
 		//FIX: переделать все на shape'ы
@@ -15,8 +13,6 @@ namespace LayoutCeiling
 		public CeilingLayout()
 		{
 			Shapes = new List<Shape>();
-//			points = new List<Point2>();
-			cutout = new List<Point2>();
 		}
 
 		public static string PointLetter(int index)
@@ -97,6 +93,16 @@ namespace LayoutCeiling
 		{
 			//FIX: ?? учитывать cutout
 			return Shapes.Count == 0;
+		}
+
+		public int ShapeIndexAtCoord(Point2 coord)
+		{
+			for(int i = Shapes.Count-1; i >= 0; --i)
+			{
+				if (Geometry.PointInPolygon(coord, Shapes[i].Points))
+					return i;
+			}
+			return -1;
 		}
 	}
 }
